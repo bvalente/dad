@@ -1,0 +1,13 @@
+
+#folders
+.vs
+
+#compilation files
+*.exe
+*.cache
+
+#IDE files
+*.sln
+*.suo
+*.user
+*.csproj
