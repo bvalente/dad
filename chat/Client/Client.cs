@@ -11,25 +11,10 @@ namespace RemotingSample {
 		static void Main() {
 			TcpChannel channel = new TcpChannel();
 			ChannelServices.RegisterChannel(channel,false);
-
-			MyRemoteObject obj = (MyRemoteObject) Activator.GetObject(
-				typeof(MyRemoteObject),
-				"tcp://localhost:8086/MyRemoteObjectName");
-
-	 		try
-	 		{
-	 			Console.WriteLine(obj.MetodoOla());
-	 		}
-	 		catch(SocketException)
-	 		{
-	 			System.Console.WriteLine("Could not locate server");
-	 		}
-			
-			//my experiment
-
-			ICServer server = (ICServer) Activator.GetObject(
-				typeof(ICServer),
-				"tcp://localhost:8086/MyServer");
+		
+			IChat server = (IChat) Activator.GetObject(
+				typeof(IChat),
+				"tcp://localhost:8086/Chat");
 
 			try{
 				Console.WriteLine(server.name());

@@ -9,9 +9,9 @@ namespace RemotingSample
 		}
   }
 
-  public interface ICServer {
+  public interface IChat {
 
     string name();
-
+    
   }
 }

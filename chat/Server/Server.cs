@@ -12,24 +12,25 @@ namespace RemotingSample {
 			TcpChannel channel = new TcpChannel(8086);
 			ChannelServices.RegisterChannel(channel,false);
 
-			RemotingConfiguration.RegisterWellKnownServiceType(
+			/*RemotingConfiguration.RegisterWellKnownServiceType(
 				typeof(MyRemoteObject),
 				"MyRemoteObjectName",
 				WellKnownObjectMode.Singleton);
+			*/
       
-			CServer server = new CServer();
+			Chat chat = new Chat();
 
 			RemotingServices.Marshal(
-				server,
-				"MyServer",
-				typeof(CServer));
+				chat,
+				"Chat",
+				typeof(Chat));
 			
 			System.Console.WriteLine("<enter> para sair...");
 			System.Console.ReadLine();
 		}
 	}
 
-	class CServer : MarshalByRefObject,ICServer{
+	class Chat : MarshalByRefObject,IChat{
 
 		public string name(){
 			return "my name";

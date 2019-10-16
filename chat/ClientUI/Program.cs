@@ -23,6 +23,7 @@ namespace ClientUI
         private static void AppMain(Application app, string[] args)
         {
             app.Run(new MainWindow());
+            //here?
             
         }
     }
