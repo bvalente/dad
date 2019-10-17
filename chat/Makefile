@@ -1,11 +1,14 @@
 
+commonTypes:
+	csc -target:library -out:CommonTypes/CommonTypes.dll -recurse:CommonTypes.cs
+
 server:
 	csc -out:Server/Server.exe -recurse:Server.cs -recurse:CommonTypes.cs
 
 client:
 	csc -out:Client/Client.exe -recurse:Client.cs -recurse:CommonTypes.cs
 
-default: server client
+default: commonTypes server client
 
 run_server:
 	./Server/Server.exe
