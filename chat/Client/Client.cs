@@ -12,12 +12,12 @@ namespace RemotingSample {
 			TcpChannel channel = new TcpChannel();
 			ChannelServices.RegisterChannel(channel,false);
 		
-			IChat server = (IChat) Activator.GetObject(
-				typeof(IChat),
-				"tcp://localhost:8086/Chat");
+			IServerChat server = (IServerChat) Activator.GetObject(
+				typeof(IServerChat),
+				"tcp://localhost:8086/ServerChat");
 
 			try{
-				Console.WriteLine(server.name());
+				Console.WriteLine(server.Ping());
 			} catch(SocketException){
 				System.Console.WriteLine("socket error");
 			}

@@ -11,29 +11,31 @@ namespace RemotingSample {
 
 			TcpChannel channel = new TcpChannel(8086);
 			ChannelServices.RegisterChannel(channel,false);
-
-			/*RemotingConfiguration.RegisterWellKnownServiceType(
-				typeof(MyRemoteObject),
-				"MyRemoteObjectName",
-				WellKnownObjectMode.Singleton);
-			*/
       
-			Chat chat = new Chat();
+			ServerChat server = new ServerChat();
 
 			RemotingServices.Marshal(
-				chat,
-				"Chat",
-				typeof(Chat));
+				server,
+				"ServerChat",
+				typeof(ServerChat));
 			
 			System.Console.WriteLine("<enter> para sair...");
 			System.Console.ReadLine();
 		}
 	}
 
-	class Chat : MarshalByRefObject,IChat{
+	class ServerChat : MarshalByRefObject,IServerChat{
 
-		public string name(){
-			return "my name";
+		public string Ping(){
+			return "Hello, I am the server";
+		}
+
+		public void AddUser(string nick, string url){
+			//TODO connect to client and save it
+		}
+
+		public void SendServer(string nick, string message){
+			//TODO send message to every user except the original sender
 		}
 
 	}
