@@ -23,8 +23,8 @@ namespace ClientUI
         private static void AppMain(Application app, string[] args)
         {
             app.Run(new MainWindow());
-            //here?
-            
+            //the code gets stuck here unitl the window is closed
+
         }
     }
 }

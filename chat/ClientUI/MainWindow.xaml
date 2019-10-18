@@ -11,7 +11,7 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center" 
                 Width="300">
-        <TextBlock Text="{Binding Greeting}"/>
+        <TextBlock Name="block" Text="{Binding Greeting}"/>
         <TextBox Name="box" Text="{Binding Name}" />
         <Button Content="Hi" />
     </StackPanel>
