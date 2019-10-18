@@ -6,7 +6,14 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="ClientUI.MainWindow"
         Title="ClientUI">
-        <Button Content = "Some name"/>
-    <!--views:ChatView/>
-    <TextBox>pila</TextBox-->
+
+    <StackPanel Orientation="Vertical" 
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center" 
+                Width="300">
+        <TextBlock Text="{Binding Greeting}"/>
+        <TextBox Name="box" Text="{Binding Name}" />
+        <Button Content="Hi" />
+    </StackPanel>
+
 </Window>

@@ -28,3 +28,13 @@ namespace ClientUI
         }
     }
 }
+
+namespace RemotingSample{
+
+    class ClientChat : MarshalByRefObject, IClientChat{
+
+        public void SendClient(string message){
+            //TODO something
+        }
+    }
+}
