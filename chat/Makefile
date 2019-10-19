@@ -11,7 +11,7 @@ client:
 client_ui:
 	msbuild ClientUI/ClientUI.csproj
 
-default: commonTypes server client client_ui
+all: commonTypes server client client_ui
 
 run_server:
 	./Server/Server.exe
