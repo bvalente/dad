@@ -27,7 +27,7 @@ namespace RemotingSample {
 	class ServerChat : MarshalByRefObject,IServerChat{
 
 		public string Ping(){
-			return "Hello, I am the server";
+			return "server is online";
 		}
 
 		public void AddUser(string nick, string url){

@@ -11,9 +11,14 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center" 
                 Width="300">
-        <TextBlock Name="block" Text="{Binding Greeting}"/>
-        <TextBox Name="box" Text="{Binding Name}" />
-        <Button Content="Hi" />
+        <TextBlock Name="ServerBlock" Text="server is offline"/>
+        <TextBox Name="PortBox"  />
+        <TextBox Name="NickBox"  />
+        <Button Content="Connect" Click="Connect"/>
+
+        <TextBlock Name="ChatBlock" Height="200"/>
+        <TextBox Name="MessageBox"  />
+        <Button Content="Send" />
     </StackPanel>
 
 </Window>

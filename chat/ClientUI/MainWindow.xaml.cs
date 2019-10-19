@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.Interactivity;
 using RemotingSample;
 using System;
 using System.Runtime.Remoting;
@@ -12,22 +13,25 @@ namespace ClientUI
 {
     public class MainWindow : Window
     {
-        public TextBox box;
-        public TextBlock block;
-        public Button button;
+        public TextBlock serverBlock;
+        public TextBox portBox;
+        
+        public TextBox nickBox;
+        public Button connectButton;
+        public TextBlock chatBlock;
+        public TextBox messageBox;
+        public Button sendButton;
 
         public MainWindow()
         {
             InitializeComponent();
             //get UI objects here
 
-            box = this.Find<TextBox>("box");//find in this window
-            block = this.Find<TextBlock>("block");
-
-            box.Text = "banana2";
-            block.Text = "banana3";
-            System.Console.WriteLine(box.Text);
-            System.Console.WriteLine(block.Text);
+            serverBlock = this.Find<TextBlock>("ServerBlock");
+            portBox = this.Find<TextBox>("PortBox");//find in this window
+            nickBox = this.Find<TextBox>("NickBox");
+            chatBlock = this.Find<TextBlock>("ChatBlock");
+            messageBox = this.Find<TextBox>("MessageBox");
 
             TcpChannel channel = new TcpChannel();
 			ChannelServices.RegisterChannel(channel,false);
@@ -38,11 +42,15 @@ namespace ClientUI
 
 			try{
 				//Console.WriteLine(server.Ping());
-                block.Text = server.Ping();
+                serverBlock.Text = server.Ping();
 			} catch(SocketException){
 				System.Console.WriteLine("socket error");
 			}
 
+        }
+
+        public void Connect(Object sender, RoutedEventArgs e){
+            messageBox.Text = "button test";
         }
 
         private void InitializeComponent()
