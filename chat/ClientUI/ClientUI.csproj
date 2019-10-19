@@ -2,7 +2,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <!--TargetFramework>netcoreapp3.0</TargetFramework-->
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <Compile Update="**\*.xaml.cs">
@@ -24,5 +24,8 @@
   <Reference Include="CommonTypes">
     <HintPath>../CommonTypes/CommonTypes.dll</HintPath>
   </Reference>
-</ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <DotNetCliToolReference Include="dotnet-mono" Version="*" />
+  </ItemGroup>
 </Project>

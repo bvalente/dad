@@ -8,7 +8,10 @@ server:
 client:
 	csc -out:Client/Client.exe -recurse:Client.cs -recurse:CommonTypes.cs
 
-default: commonTypes server client
+client_ui:
+	msbuild ClientUI/ClientUI.csproj
+
+default: commonTypes server client client_ui
 
 run_server:
 	./Server/Server.exe
@@ -17,6 +20,7 @@ run_client:
 	./Client/Client.exe
 
 run_client_ui:
-	dotnet run -p ClientUI
+	#dotnet run -p ClientUI
+	mono ClientUI/bin/Debug/net472/ClientUI.exe
 
 #TODO add for loop to create multiple clients
