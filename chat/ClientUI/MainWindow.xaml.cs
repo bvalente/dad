@@ -21,36 +21,58 @@ namespace ClientUI
         public TextBlock chatBlock;
         public TextBox messageBox;
         public Button sendButton;
+        private IServerChat server;
+        private ClientChat client;
 
         public MainWindow()
         {
             InitializeComponent();
-            //get UI objects here
 
+            //get UI objects here
             serverBlock = this.Find<TextBlock>("ServerBlock");
-            portBox = this.Find<TextBox>("PortBox");//find in this window
+            portBox = this.Find<TextBox>("PortBox");
             nickBox = this.Find<TextBox>("NickBox");
+            connectButton = this.Find<Button>("ConnectButton");
             chatBlock = this.Find<TextBlock>("ChatBlock");
             messageBox = this.Find<TextBox>("MessageBox");
-
-            TcpChannel channel = new TcpChannel();
-			ChannelServices.RegisterChannel(channel,false);
-		
-			IServerChat server = (IServerChat) Activator.GetObject(
-				typeof(IServerChat),
-				"tcp://localhost:8086/ServerChat");
-
-			try{
-				//Console.WriteLine(server.Ping());
-                serverBlock.Text = server.Ping();
-			} catch(SocketException){
-				System.Console.WriteLine("socket error");
-			}
+            sendButton = this.Find<Button>("SendButton");            
 
         }
 
         public void Connect(Object sender, RoutedEventArgs e){
-            messageBox.Text = "button test";
+            
+            
+            string port = portBox.Text;
+            string nick = nickBox.Text;
+            string url = "tcp://localhost:"+port+"/ClientChat";
+
+            //create connection
+            TcpChannel channel = new TcpChannel(Int32.Parse(port));
+            ChannelServices.RegisterChannel(channel,false);
+        
+            server = (IServerChat) Activator.GetObject(
+                typeof(IServerChat),
+                "tcp://localhost:8086/ServerChat");
+
+            try{
+                //Console.WriteLine(server.Ping());
+                serverBlock.Text = server.Ping();
+            } catch(SocketException){
+                System.Console.WriteLine("socket error");
+            }
+
+            //marshal client chat
+            
+            client = new ClientChat();
+            RemotingServices.Marshal(
+                client,
+                "ClientChat",
+                typeof(ClientChat));
+
+            //send info to server
+            server.AddUser(nick, url); //catch exception?
+        
+            connectButton.IsEnabled=false;
         }
 
         private void InitializeComponent()

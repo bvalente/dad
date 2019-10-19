@@ -2,6 +2,7 @@ using System;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
+using System.Collections.Generic;
 
 namespace RemotingSample {
 
@@ -26,12 +27,19 @@ namespace RemotingSample {
 
 	class ServerChat : MarshalByRefObject,IServerChat{
 
+		private Dictionary<string,IClientChat> clientList = new Dictionary<string, IClientChat>();
+
 		public string Ping(){
 			return "server is online";
 		}
 
 		public void AddUser(string nick, string url){
-			//TODO connect to client and save it
+			
+			IClientChat client = (IClientChat) Activator.GetObject(
+				typeof(IClientChat),
+				url	);
+			clientList.Add(nick, client);
+			System.Console.WriteLine("Client " + nick + " added.");
 		}
 
 		public void SendServer(string nick, string message){

@@ -12,13 +12,13 @@
                 VerticalAlignment="Center" 
                 Width="300">
         <TextBlock Name="ServerBlock" Text="server is offline"/>
-        <TextBox Name="PortBox"  />
+        <TextBox Name="PortBox" Text="808x" />
         <TextBox Name="NickBox"  />
-        <Button Content="Connect" Click="Connect"/>
+        <Button Name ="ConnectButton" Content="Connect" Click="Connect" IsEnabled="true"/>
 
         <TextBlock Name="ChatBlock" Height="200"/>
         <TextBox Name="MessageBox"  />
-        <Button Content="Send" />
+        <Button Name ="SendButton" Content="Send" IsEnabled="true"/>
     </StackPanel>
 
 </Window>
