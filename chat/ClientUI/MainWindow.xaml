@@ -18,7 +18,7 @@
 
         <TextBlock Name="ChatBlock" Height="200"/>
         <TextBox Name="MessageBox"  />
-        <Button Name ="SendButton" Content="Send" IsEnabled="true"/>
+        <Button Name ="SendButton" Content="Send" Click="Send" IsEnabled="true"/>
     </StackPanel>
 
 </Window>

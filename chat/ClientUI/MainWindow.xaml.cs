@@ -63,7 +63,7 @@ namespace ClientUI
 
             //marshal client chat
             
-            client = new ClientChat();
+            client = new ClientChat(this);
             RemotingServices.Marshal(
                 client,
                 "ClientChat",
@@ -72,7 +72,26 @@ namespace ClientUI
             //send info to server
             server.AddUser(nick, url); //catch exception?
         
+            portBox.IsEnabled=false;
+            nickBox.IsEnabled=false;
             connectButton.IsEnabled=false;
+        }
+
+        public void Send(Object sender, RoutedEventArgs e){
+            string message = messageBox.Text;
+            string nick = nickBox.Text;
+            try{
+                server.SendServer(nick, message);
+            } catch(SocketException){
+                System.Console.WriteLine("socket error");
+            }
+            
+            updateChat("you: " + message);
+
+        }
+
+        public void updateChat(string message){
+            chatBlock.Text = chatBlock.Text + '\n' + message;
         }
 
         private void InitializeComponent()

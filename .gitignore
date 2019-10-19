@@ -1,6 +1,7 @@
 
 #folders
 .vs
+.vscode
 
 #compilation files
 *.exe

@@ -1,7 +1,11 @@
 ﻿using System;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Logging.Serilog;
 using RemotingSample;
+using ClientUI;
+using System.Threading;
+using Avalonia.Threading;
 
 namespace ClientUI
 {
@@ -33,8 +37,19 @@ namespace RemotingSample{
 
     class ClientChat : MarshalByRefObject, IClientChat{
 
+        private MainWindow window;
+
+        public ClientChat(MainWindow w){
+            window = w;
+        }
+
         public void SendClient(string message){
-            //TODO something
+
+            //we need to send to dispatcher because the UI only works on one thread
+            Dispatcher dispatcher = Dispatcher.UIThread;
+            Action action = new Action( () => window.updateChat(message));
+            dispatcher.InvokeAsync(action);
+
         }
     }
 }

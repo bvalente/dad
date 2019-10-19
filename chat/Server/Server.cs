@@ -3,6 +3,7 @@ using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace RemotingSample {
 
@@ -43,8 +44,16 @@ namespace RemotingSample {
 		}
 
 		public void SendServer(string nick, string message){
-			//TODO send message to every user except the original sender
-		}
+			string msg = nick + ": " + message;
+			Console.WriteLine(msg);
 
+			foreach (KeyValuePair<string, IClientChat> pair in clientList){
+				if(!pair.Key.Equals(nick)){
+					Console.WriteLine("sending message to " + pair.Key);
+					pair.Value.SendClient(msg);
+				}
+			}
+		}
+		
 	}
 }
