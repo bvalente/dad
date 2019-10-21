@@ -1,0 +1,16 @@
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\ClientNUnit\obj\Debug\net472\ClientNUnit.csprojAssemblyReference.cache
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\ClientNUnit\obj\Debug\net472\ClientNUnit.AssemblyInfoInputs.cache
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\ClientNUnit\obj\Debug\net472\ClientNUnit.AssemblyInfo.cs
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\ClientNUnit\bin\Debug\net472\NUnit3.TestAdapter.dll
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\ClientNUnit\bin\Debug\net472\NUnit3.TestAdapter.pdb
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\ClientNUnit\bin\Debug\net472\nunit.engine.dll
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\ClientNUnit\bin\Debug\net472\nunit.engine.api.dll
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\ClientNUnit\bin\Debug\net472\ClientNUnit.dll
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\ClientNUnit\bin\Debug\net472\ClientNUnit.pdb
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\ClientNUnit\bin\Debug\net472\Microsoft.VisualStudio.CodeCoverage.Shim.dll
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\ClientNUnit\bin\Debug\net472\nunit.framework.dll
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\ClientNUnit\bin\Debug\net472\CommonTypes.dll
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\ClientNUnit\bin\Debug\net472\CommonTypes.pdb
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\ClientNUnit\obj\Debug\net472\ClientNUnit.csproj.CopyComplete
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\ClientNUnit\obj\Debug\net472\ClientNUnit.dll
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\ClientNUnit\obj\Debug\net472\ClientNUnit.pdb

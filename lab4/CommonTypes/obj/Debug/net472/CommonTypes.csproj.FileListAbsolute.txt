@@ -1,0 +1,7 @@
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\CommonTypes\bin\Debug\net472\CommonTypes.dll
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\CommonTypes\bin\Debug\net472\CommonTypes.pdb
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\CommonTypes\obj\Debug\net472\CommonTypes.csprojAssemblyReference.cache
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\CommonTypes\obj\Debug\net472\CommonTypes.AssemblyInfoInputs.cache
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\CommonTypes\obj\Debug\net472\CommonTypes.AssemblyInfo.cs
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\CommonTypes\obj\Debug\net472\CommonTypes.dll
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\CommonTypes\obj\Debug\net472\CommonTypes.pdb

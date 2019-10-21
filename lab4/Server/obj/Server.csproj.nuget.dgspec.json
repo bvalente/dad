@@ -1,0 +1,97 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\Bernardo Valente\\Documents\\IST\\4ano\\DAD\\git\\lab4\\Server\\Server.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\Bernardo Valente\\Documents\\IST\\4ano\\DAD\\git\\lab4\\CommonTypes\\CommonTypes.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Bernardo Valente\\Documents\\IST\\4ano\\DAD\\git\\lab4\\CommonTypes\\CommonTypes.csproj",
+        "projectName": "CommonTypes",
+        "projectPath": "C:\\Users\\Bernardo Valente\\Documents\\IST\\4ano\\DAD\\git\\lab4\\CommonTypes\\CommonTypes.csproj",
+        "packagesPath": "C:\\Users\\Bernardo Valente\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Bernardo Valente\\Documents\\IST\\4ano\\DAD\\git\\lab4\\CommonTypes\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Bernardo Valente\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net472"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net472": {
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net472": {
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.0.100\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\Bernardo Valente\\Documents\\IST\\4ano\\DAD\\git\\lab4\\Server\\Server.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Bernardo Valente\\Documents\\IST\\4ano\\DAD\\git\\lab4\\Server\\Server.csproj",
+        "projectName": "Server",
+        "projectPath": "C:\\Users\\Bernardo Valente\\Documents\\IST\\4ano\\DAD\\git\\lab4\\Server\\Server.csproj",
+        "packagesPath": "C:\\Users\\Bernardo Valente\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Bernardo Valente\\Documents\\IST\\4ano\\DAD\\git\\lab4\\Server\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Bernardo Valente\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net472"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net472": {
+            "projectReferences": {
+              "C:\\Users\\Bernardo Valente\\Documents\\IST\\4ano\\DAD\\git\\lab4\\CommonTypes\\CommonTypes.csproj": {
+                "projectPath": "C:\\Users\\Bernardo Valente\\Documents\\IST\\4ano\\DAD\\git\\lab4\\CommonTypes\\CommonTypes.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net472": {
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.0.100\\RuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "win7-x86": {
+          "#import": []
+        }
+      }
+    }
+  }
+}

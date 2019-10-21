@@ -1,0 +1,11 @@
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\Server\bin\Debug\netcoreapp3.0\Server.exe
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\Server\bin\Debug\netcoreapp3.0\Server.deps.json
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\Server\bin\Debug\netcoreapp3.0\Server.runtimeconfig.json
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\Server\bin\Debug\netcoreapp3.0\Server.runtimeconfig.dev.json
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\Server\bin\Debug\netcoreapp3.0\Server.dll
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\Server\bin\Debug\netcoreapp3.0\Server.pdb
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\Server\obj\Debug\netcoreapp3.0\Server.csprojAssemblyReference.cache
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\Server\obj\Debug\netcoreapp3.0\Server.AssemblyInfoInputs.cache
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\Server\obj\Debug\netcoreapp3.0\Server.AssemblyInfo.cs
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\Server\obj\Debug\netcoreapp3.0\Server.dll
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\Server\obj\Debug\netcoreapp3.0\Server.pdb

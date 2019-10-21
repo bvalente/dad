@@ -1,0 +1,11 @@
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\Server\bin\Debug\net472\Server.exe.config
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\Server\bin\Debug\net472\Server.exe
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\Server\bin\Debug\net472\Server.pdb
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\Server\obj\Debug\net472\Server.csprojAssemblyReference.cache
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\Server\obj\Debug\net472\Server.AssemblyInfoInputs.cache
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\Server\obj\Debug\net472\Server.AssemblyInfo.cs
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\Server\obj\Debug\net472\Server.exe
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\Server\obj\Debug\net472\Server.pdb
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\Server\bin\Debug\net472\CommonTypes.dll
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\Server\bin\Debug\net472\CommonTypes.pdb
+C:\Users\Bernardo Valente\Documents\IST\4ano\DAD\git\lab4\Server\obj\Debug\net472\Server.csproj.CopyComplete

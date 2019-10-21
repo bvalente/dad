@@ -1,0 +1,94 @@
+{
+  "version": 3,
+  "targets": {
+    ".NETFramework,Version=v4.7.2": {
+      "CommonTypes/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.7.2",
+        "compile": {
+          "bin/placeholder/CommonTypes.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/CommonTypes.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.7.2/win7-x86": {
+      "CommonTypes/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.7.2",
+        "compile": {
+          "bin/placeholder/CommonTypes.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/CommonTypes.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "CommonTypes/1.0.0": {
+      "type": "project",
+      "path": "../CommonTypes/CommonTypes.csproj",
+      "msbuildProject": "../CommonTypes/CommonTypes.csproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    ".NETFramework,Version=v4.7.2": [
+      "CommonTypes >= 1.0.0"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\Bernardo Valente\\.nuget\\packages\\": {},
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "C:\\Users\\Bernardo Valente\\Documents\\IST\\4ano\\DAD\\git\\lab4\\Server\\Server.csproj",
+      "projectName": "Server",
+      "projectPath": "C:\\Users\\Bernardo Valente\\Documents\\IST\\4ano\\DAD\\git\\lab4\\Server\\Server.csproj",
+      "packagesPath": "C:\\Users\\Bernardo Valente\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Bernardo Valente\\Documents\\IST\\4ano\\DAD\\git\\lab4\\Server\\obj\\",
+      "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+      ],
+      "configFilePaths": [
+        "C:\\Users\\Bernardo Valente\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net472"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net472": {
+          "projectReferences": {
+            "C:\\Users\\Bernardo Valente\\Documents\\IST\\4ano\\DAD\\git\\lab4\\CommonTypes\\CommonTypes.csproj": {
+              "projectPath": "C:\\Users\\Bernardo Valente\\Documents\\IST\\4ano\\DAD\\git\\lab4\\CommonTypes\\CommonTypes.csproj"
+            }
+          }
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      }
+    },
+    "frameworks": {
+      "net472": {
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.0.100\\RuntimeIdentifierGraph.json"
+      }
+    },
+    "runtimes": {
+      "win7-x86": {
+        "#import": []
+      }
+    }
+  }
+}
