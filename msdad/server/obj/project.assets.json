@@ -1,40 +1,63 @@
 {
   "version": 3,
   "targets": {
-    ".NETCoreApp,Version=v3.0": {}
+    ".NETFramework,Version=v4.7.2": {
+      "lib/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.7.2",
+        "compile": {
+          "bin/placeholder/lib.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/lib.dll": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "lib/1.0.0": {
+      "type": "project",
+      "path": "../lib/lib.csproj",
+      "msbuildProject": "../lib/lib.csproj"
+    }
+  },
   "projectFileDependencyGroups": {
-    ".NETCoreApp,Version=v3.0": []
+    ".NETFramework,Version=v4.7.2": [
+      "lib >= 1.0.0"
+    ]
   },
   "packageFolders": {
-    "/Users/andresantos/.nuget/packages/": {},
-    "/usr/local/share/dotnet/sdk/NuGetFallbackFolder": {}
+    "/home/bvalente/.nuget/packages/": {},
+    "/usr/share/dotnet/sdk/NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/andresantos/Desktop/DAD/dad/msdad/server/server.csproj",
+      "projectUniqueName": "/home/bvalente/Documents/dad/git/msdad/server/server.csproj",
       "projectName": "server",
-      "projectPath": "/Users/andresantos/Desktop/DAD/dad/msdad/server/server.csproj",
-      "packagesPath": "/Users/andresantos/.nuget/packages/",
-      "outputPath": "/Users/andresantos/Desktop/DAD/dad/msdad/server/obj/",
+      "projectPath": "/home/bvalente/Documents/dad/git/msdad/server/server.csproj",
+      "packagesPath": "/home/bvalente/.nuget/packages/",
+      "outputPath": "/home/bvalente/Documents/dad/git/msdad/server/obj/",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
+        "/usr/share/dotnet/sdk/NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "/Users/andresantos/.nuget/NuGet/NuGet.Config"
+        "/home/bvalente/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
-        "netcoreapp3.0"
+        "net472"
       ],
       "sources": {
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
-        "netcoreapp3.0": {
-          "projectReferences": {}
+        "net472": {
+          "projectReferences": {
+            "/home/bvalente/Documents/dad/git/msdad/lib/lib.csproj": {
+              "projectPath": "/home/bvalente/Documents/dad/git/msdad/lib/lib.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
@@ -44,23 +67,8 @@
       }
     },
     "frameworks": {
-      "netcoreapp3.0": {
-        "imports": [
-          "net461",
-          "net462",
-          "net47",
-          "net471",
-          "net472",
-          "net48"
-        ],
-        "assetTargetFallback": true,
-        "warn": true,
-        "frameworkReferences": {
-          "Microsoft.NETCore.App": {
-            "privateAssets": "all"
-          }
-        },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/3.0.100/RuntimeIdentifierGraph.json"
+      "net472": {
+        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/3.0.100/RuntimeIdentifierGraph.json"
       }
     }
   }

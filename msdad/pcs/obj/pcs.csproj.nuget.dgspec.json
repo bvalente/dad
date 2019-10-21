@@ -1,32 +1,32 @@
 {
   "format": 1,
   "restore": {
-    "/Users/andresantos/Desktop/DAD/dad/msdad/pcs/pcs.csproj": {}
+    "/home/bvalente/Documents/dad/git/msdad/pcs/pcs.csproj": {}
   },
   "projects": {
-    "/Users/andresantos/Desktop/DAD/dad/msdad/pcs/pcs.csproj": {
+    "/home/bvalente/Documents/dad/git/msdad/lib/lib.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/andresantos/Desktop/DAD/dad/msdad/pcs/pcs.csproj",
-        "projectName": "pcs",
-        "projectPath": "/Users/andresantos/Desktop/DAD/dad/msdad/pcs/pcs.csproj",
-        "packagesPath": "/Users/andresantos/.nuget/packages/",
-        "outputPath": "/Users/andresantos/Desktop/DAD/dad/msdad/pcs/obj/",
+        "projectUniqueName": "/home/bvalente/Documents/dad/git/msdad/lib/lib.csproj",
+        "projectName": "lib",
+        "projectPath": "/home/bvalente/Documents/dad/git/msdad/lib/lib.csproj",
+        "packagesPath": "/home/bvalente/.nuget/packages/",
+        "outputPath": "/home/bvalente/Documents/dad/git/msdad/lib/obj/",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
+          "/usr/share/dotnet/sdk/NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "/Users/andresantos/.nuget/NuGet/NuGet.Config"
+          "/home/bvalente/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
-          "netcoreapp3.0"
+          "net472"
         ],
         "sources": {
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "netcoreapp3.0": {
+          "net472": {
             "projectReferences": {}
           }
         },
@@ -37,23 +37,50 @@
         }
       },
       "frameworks": {
-        "netcoreapp3.0": {
-          "imports": [
-            "net461",
-            "net462",
-            "net47",
-            "net471",
-            "net472",
-            "net48"
-          ],
-          "assetTargetFallback": true,
-          "warn": true,
-          "frameworkReferences": {
-            "Microsoft.NETCore.App": {
-              "privateAssets": "all"
+        "net472": {
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/3.0.100/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/bvalente/Documents/dad/git/msdad/pcs/pcs.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/bvalente/Documents/dad/git/msdad/pcs/pcs.csproj",
+        "projectName": "pcs",
+        "projectPath": "/home/bvalente/Documents/dad/git/msdad/pcs/pcs.csproj",
+        "packagesPath": "/home/bvalente/.nuget/packages/",
+        "outputPath": "/home/bvalente/Documents/dad/git/msdad/pcs/obj/",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "/usr/share/dotnet/sdk/NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "/home/bvalente/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net472"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net472": {
+            "projectReferences": {
+              "/home/bvalente/Documents/dad/git/msdad/lib/lib.csproj": {
+                "projectPath": "/home/bvalente/Documents/dad/git/msdad/lib/lib.csproj"
+              }
             }
-          },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/3.0.100/RuntimeIdentifierGraph.json"
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net472": {
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/3.0.100/RuntimeIdentifierGraph.json"
         }
       }
     }
