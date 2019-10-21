@@ -2,6 +2,7 @@
 #folders
 .vs
 .vscode
+.DS_Store
 
 #compilation files
 *.exe
