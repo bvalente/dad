@@ -7,7 +7,7 @@ namespace lib
         private string url;
         private string port;
 
-        serverInfo(string url, string port){
+        ServerInfo(string url, string port){
             this.url = url;
             this.port = port;
         }

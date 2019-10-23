@@ -6,7 +6,7 @@ namespace lib
         private string url;
         private string port;
 
-        clientInfo(string name, string url, string port){
+        ClientInfo(string name, string url, string port){
             this.name = name;
             this.url = url;
             this.port = port;

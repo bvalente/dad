@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace lib
 {
     public class Slot{
@@ -25,9 +27,8 @@ namespace lib
         List<string> invitees; //can be null
 
         MeetingProposal(string coordinator, string topic, int minParticipants,
-                        List<Slot> slotList){
-            MeetingProposal(coordinator, topic, minParticipants, slotList, null);
-        }
+                        List<Slot> slotList) : this(coordinator, topic, minParticipants, slotList, null)
+        {}
         MeetingProposal(string coordinator, string topic, int minParticipants,
                         List<Slot> slotList , List<string> invitees){
             this.coordinator = coordinator;
