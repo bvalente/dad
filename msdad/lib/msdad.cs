@@ -20,11 +20,11 @@ namespace lib
     }
 
     public class MeetingProposal{
-        string coordinator;
-        string topic;
-        int minParticipants;
-        List<Slot> slotList;
-        List<string> invitees; //can be null
+        public string coordinator;
+        public string topic;
+        public int minParticipants;
+        public List<Slot> slotList;
+        public List<string> invitees; //can be null
 
         MeetingProposal(string coordinator, string topic, int minParticipants,
                         List<Slot> slotList) : this(coordinator, topic, minParticipants, slotList, null)

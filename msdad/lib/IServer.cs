@@ -20,7 +20,13 @@ namespace lib
     }
 
     public interface IServer{
+
         // simple ping to check server status
         string ping();
+
+        // create meeting 
+        void createMeeting(MeetingProposal meeting);
+
+        void addClient(ClientInfo client);
     }
 }
