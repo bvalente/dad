@@ -1,5 +1,9 @@
 #unix Makefile
 
+SERVER_PORT=8080
+CLIENT_PORT=8090
+CLIENT_NAME=teste
+
 #compile
 
 lib:
@@ -22,10 +26,10 @@ all: lib server client pcs puppetMaster
 #run
 
 run\ server: server
-	mono server/bin/Debug/net472/server.exe
+	mono server/bin/Debug/net472/server.exe ${SERVER_PORT}
 
 run\ client: client
-	mono client/bin/Debug/net472/client.exe
+	mono client/bin/Debug/net472/client.exe ${CLIENT_NAME} ${CLIENT_PORT}
 
 run\ pcs: pcs
 	mono pcs/bin/Debug/net472/pcs.exe

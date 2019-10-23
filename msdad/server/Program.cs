@@ -1,6 +1,10 @@
 ﻿using System;
 using lib;
 using System.Collections.Generic;
+using System.Runtime.Remoting;
+using System.Runtime.Remoting.Channels.Tcp;
+using System.Runtime.Remoting.Channels;
+using System.Net.Sockets;
 
 namespace server
 {
@@ -72,6 +76,7 @@ namespace lib{
             if(meeting.invitees == null){
                 senders = clientList;
             } else {
+                senders = new Dictionary<string, IClient>();
                 foreach(string s in meeting.invitees){
                     senders.Add(s, clientList[s]);
                 }
@@ -84,13 +89,13 @@ namespace lib{
                 }
             }
 
-            meetingList.add(meeting);
+            meetingList.Add(meeting);
 
         }
 
         public void addClient(ClientInfo clientInfo){
             //check if there is a client with the same name
-            if (clientList.ContainsKey(client.getName())){
+            if (clientList.ContainsKey(clientInfo.getName())){
                 //TODO throw exception
                 return;
             }
@@ -99,7 +104,7 @@ namespace lib{
             IClient client = (IClient) Activator.GetObject(
                         typeof(IClient),
                         clientInfo.getUrl() + ':' + clientInfo.getPort() + "/Client");
-            clientList.add(clientInfo.getName(),client);
+            clientList.Add(clientInfo.getName(),client);
 
             //send client info to other servers?
         }

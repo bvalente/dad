@@ -26,6 +26,7 @@ namespace lib
         public List<Slot> slotList;
         public List<string> invitees; //can be null
 
+        //test if this works, seems wrong
         MeetingProposal(string coordinator, string topic, int minParticipants,
                         List<Slot> slotList) : this(coordinator, topic, minParticipants, slotList, null)
         {}
