@@ -14,8 +14,12 @@
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.8.2" />
     <PackageReference Include="Avalonia.Desktop" Version="0.8.2" />
+    <Reference Include="System.Runtime.Remoting">
+      <Name>System.Runtime.Remoting</Name>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\lib\lib.csproj" />
+    
   </ItemGroup>
 </Project>

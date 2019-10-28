@@ -13,13 +13,16 @@ namespace client
         //args - name, port?
         static void Main(string[] args)
         {
-            if (args.Length != 2){
-                //mandar exception
-                return;
+
+            string name = args[0];
+            string port;
+
+             if(args.Length < 2){
+                port = "8080";
+            } else {
+                port = args[1];
             }
-            string name = args[0]; //cuidado!
-            string port = args[1];
-            
+          
             
             //create tcp channel
             TcpChannel channel = new TcpChannel(Int32.Parse(port));
@@ -46,6 +49,8 @@ namespace lib
     class Client : MarshalByRefObject, IClient{
         public string name;
         public string port;
+
+        private IServer server;
                 
         //meeting database
         List<MeetingProposal> meetingList;
@@ -54,6 +59,17 @@ namespace lib
         public Client(string name, string port){
             this.name = name;
             this.port = port;
+
+            /*TcpChannel channel = new TcpChannel();
+            ChannelServices.RegisterChannel(channel,false);
+            */
+            server = (IServer) Activator.GetObject(typeof(IServer), "tcp://localhost:8090/Server"); //TODO: fazer no caso em que ha varias maquinas
+            
+            if (server == null){
+            System.Console.WriteLine("Could not locate server");
+            }
+
+            Console.WriteLine("hi OwO");
         }
 
         public string ping(){
@@ -69,6 +85,9 @@ namespace lib
              //TODO
             //criar MeetingProposal
             //enviar para o servidor
+            //MeetingProposal m = new MeetingProposal(this.name, meeting_topic, min_attendees, list_of_slots, list_of_invitees);
+            
+            //server.createMeeting(m);
         }
 
         //Joins an existing meeting

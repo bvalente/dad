@@ -2,12 +2,12 @@ namespace lib
 {
     public interface IPCS{
         // simple ping to check PCS status
-        void ping();
+        string ping();
 
         // create client and return important info
-        ClientInfo createClient(string name);
+        ClientInfo createClient(string name, string port);
 
         // create server and return important info
-        ServerInfo createServer();
+        ServerInfo createServer(string port);
     }
 }

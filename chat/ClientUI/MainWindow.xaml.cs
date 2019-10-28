@@ -57,7 +57,7 @@ namespace ClientUI
             try{
                 //Console.WriteLine(server.Ping());
                 serverBlock.Text = server.Ping();
-            } catch(SocketException){
+            } catch(SocketException e){
                 System.Console.WriteLine("socket error");
             }
 
