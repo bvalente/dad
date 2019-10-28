@@ -1,18 +1,40 @@
-# dad
-Repository for Design and Implementation of Distributed Applications project
+# Design and Implementation of Distributed Applications
 
-reminder
+## Introduction
 
-https://docs.microsoft.com/en-us/dotnet/core/porting/net-framework-tech-unavailable
+This project consists on 5 programs
 
-https://github.com/AvaloniaUI/Avalonia/issues/2504
+- PCS (Process Creation Service) - process that creates servers and clients
+- lib - dll library with data structure
+- Puppet Master - master process that manages all the servers and clients
+- Server - program that manages and distributes the data to other servers and clients
+- Client - user interface that can create data structures and send them to the servers
 
-Ports
+## IP Ports
 
-PCS 8070
+| Program | Ports |
+| ------- | ----: |
+| PCS | 8070 |
+| PuppetMaster | 8075 |
+| Servers | 8090-8099 |
+| Client | 8080-8089 |
 
-PuppetMaster 8075
+## Compile and Run
 
-Servers 8090-8099
+*Remeber to compile dependencies if needed*
 
-Cliente 8080-8089
+- MacOs and Linux - [Makefile](msdad/Makefile)
+	- Use the Makefile on the *msdad* directory
+	- make [project] - compile project
+	- make all - compile all projects
+	- make "run [project]" - run project
+- Windows
+	- change to desired directory and use the dotnet tool
+	- dotnet build - compiles project
+	- dotnet run - compiles and executes project
+
+
+## Reminders
+
+- https://docs.microsoft.com/en-us/dotnet/core/porting/net-framework-tech-unavailable
+- https://github.com/AvaloniaUI/Avalonia/issues/2504
