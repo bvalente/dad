@@ -1,21 +1,15 @@
-namespace lib
-{
+namespace lib{
+
     // class with important server info
     // TODO discuss serverInfo important values
     public class ServerInfo{
 
-        private string url;
-        private string port;
+        public string Url;
+        public string Port;
 
         ServerInfo(string url, string port){
-            this.url = url;
-            this.port = port;
-        }
-        public string getUrl(){
-            return this.url;
-        }
-        public string getPort(){
-            return this.port;
+            this.Url = url;
+            this.Port = port;
         }
     }
 
@@ -27,6 +21,13 @@ namespace lib
         // create meeting 
         void createMeeting(MeetingProposal meeting);
 
+        //add client
         void addClient(ClientInfo client);
+    }
+
+    public interface IServerPuppeteer{
+        
+        // simple ping to check server status
+        string ping();
     }
 }

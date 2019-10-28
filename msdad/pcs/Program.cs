@@ -9,35 +9,48 @@ using System.IO;
 using System.Diagnostics;
 
 
-namespace pcs
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
+namespace pcs{
+
+    class Program{
+
+        static void Main(string[] args){
+            
+            string ip;
             string port = "8070";
+
+            if(args.Length == 0){
+                ip = "127.0.0.1";
+            } else {
+                ip = args[0];
+            }
 
             //create tcp channel
             TcpChannel channel = new TcpChannel(Int32.Parse(port));
             ChannelServices.RegisterChannel(channel, false); 
 
-
             //create PCS
-            PCS pcs = new PCS();
+            PCS pcs = new PCS(ip);
             RemotingServices.Marshal(
                 pcs,
                 "PCS",
                 typeof(PCS));
-                      
+            
+            //DEBUG
             Console.WriteLine("New PCS created");
-            System.Console.ReadLine();
 
+            //prevent process from closing
+            System.Console.ReadLine();
         }
     }
-}
 
-namespace lib{
     class PCS : MarshalByRefObject, IPCS{
+
+        string ip;
+
+        //constructor
+        public PCS(string ip){
+            this.ip = ip;
+        }
 
         public string ping(){
             return "PCS is online";
@@ -48,23 +61,23 @@ namespace lib{
         //O FELI E GAY
         public ClientInfo createClient(string name, string port){
             string cPath = AppDomain.CurrentDomain.BaseDirectory;
-            string client = Path.Combine(cPath, "../../../../client/bin/Debug/net472/client.exe");
-            Process proc = Process.Start(client, name + ' ' + port);
+            string filePath = Path.Combine(cPath,
+                 "../../../../client/bin/Debug/net472/client.exe");
+            Process client = Process.Start(filePath, name + ' ' + port);
 
             //return new ClientInfo(name, "localhost",port); //TODO populate
             System.Console.WriteLine("ClientInfo");
             return null;
         }
-        
 
         public ServerInfo createServer(string port){
             string cPath = AppDomain.CurrentDomain.BaseDirectory;
-            string server = Path.Combine(cPath, "../../../../server/bin/Debug/net472/server.exe");
-            Process proc = Process.Start(server, port);
+            string filePath = Path.Combine(cPath,
+                 "../../../../server/bin/Debug/net472/server.exe");
+            Process server = Process.Start(filePath, port);
 
             //return new ServerInfo("localhost:///", port); //TODO populate
             return null;
-            
         }
     }
  }

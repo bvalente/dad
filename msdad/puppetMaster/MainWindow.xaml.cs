@@ -24,20 +24,27 @@ namespace puppetMaster
         }
 
         public void pcsTest(Object sender, RoutedEventArgs e){
-            string port = "8075";
-            TcpChannel channel = new TcpChannel(Int32.Parse(port));
-            ChannelServices.RegisterChannel(channel, false);  
 
+            string port = "8075";
+
+            //create tcp channel
+            TcpChannel channel = new TcpChannel(Int32.Parse(port));
+            ChannelServices.RegisterChannel(channel, false);
+
+            //get pcs
             IPCS pcs = (IPCS) Activator.GetObject(
                     (typeof(IPCS)),
                     "tcp://localhost:8070/PCS");
 
+            //test pcs connectivity
             try{
                 System.Console.WriteLine(pcs.ping());
-            } catch (SocketException ex){
-                System.Console.WriteLine("PCS NOT GREAT, RAPE");    
+            } catch (Exception ex){
+                System.Console.WriteLine("PCS NOT GREAT, RAPE");
+                Console.WriteLine(ex.Message);
             }
 
+            //create client trough pcs
             pcs.createClient("AndreValenteNotGayYesNoUYeah", "8080");
         }
     }

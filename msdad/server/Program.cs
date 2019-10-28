@@ -6,14 +6,16 @@ using System.Runtime.Remoting.Channels.Tcp;
 using System.Runtime.Remoting.Channels;
 using System.Net.Sockets;
 
-namespace server
-{
-    class Program
-    {
+namespace server{
+
+    class Program{
+
         //args - port
-        static void Main(string[] args)
-        {
-            string port; //cuidado!
+        static void Main(string[] args){
+
+            string port;
+
+            //use defualt port if none is specified
             if(args.Length == 0){
                 port = "8090";
             } else {
@@ -22,91 +24,27 @@ namespace server
 
             //create tcp channel
             TcpChannel channel = new TcpChannel(Int32.Parse(port));
-            ChannelServices.RegisterChannel(channel, false); 
-
+            ChannelServices.RegisterChannel(channel, false);
 
             //create server
             Server server = new Server(port);
             RemotingServices.Marshal(
                 server,
                 "Server",
-                typeof(Server)); 
+                typeof(Server));
+
+            //create server puppeteer
+            ServerPuppeteer puppeteer = new ServerPuppeteer(server);
+            RemotingServices.Marshal(
+                puppeteer,
+                "ServerPuppeteer",
+                typeof(ServerPuppeteer));
             
+            //DEBUG
             Console.WriteLine("New server created");
+
+            //prevent process from closing
             System.Console.ReadLine();
-        }
-    }
-}
-
-namespace lib{
-
-    class Server : MarshalByRefObject, IServer{
-
-        public string port;
-
-        public Server(string port){
-            this.port = port;
-        }
-
-        //client database
-        Dictionary<string, IClient> clientList;
-
-        //meetings database
-        List<MeetingProposal> meetingList;
-
-
-
-        Server(){
-            clientList = new Dictionary<string, IClient>();
-            //TODO load client/meetings database
-
-            //create TCP channel
-        }
-
-        public string ping(){
-            return "server is online";
-        }
-
-        public void createMeeting(MeetingProposal meeting){
-            //coordinator is in the meeting class
-            //TODO verify if the meeting is valid
-            
-            Dictionary<string, IClient> senders;
-
-            if(meeting.invitees == null){
-                senders = clientList;
-            } else {
-                senders = new Dictionary<string, IClient>();
-                foreach(string s in meeting.invitees){
-                    senders.Add(s, clientList[s]);
-                }
-            }
-
-            foreach(KeyValuePair<string, IClient> pair in clientList){//less coordinator
-                //send
-                if(pair.Key != meeting.coordinator){ //jumps cordinator and only sends to other clients
-                    pair.Value.sendMeeting(meeting);
-                }
-            }
-
-            meetingList.Add(meeting);
-
-        }
-
-        public void addClient(ClientInfo clientInfo){
-            //check if there is a client with the same name
-            if (clientList.ContainsKey(clientInfo.getName())){
-                //TODO throw exception
-                return;
-            }
-
-            //add client
-            IClient client = (IClient) Activator.GetObject(
-                        typeof(IClient),
-                        clientInfo.getUrl() + ':' + clientInfo.getPort() + "/Client");
-            clientList.Add(clientInfo.getName(),client);
-
-            //send client info to other servers?
         }
     }
 }
