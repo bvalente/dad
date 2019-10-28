@@ -5,6 +5,7 @@ using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels.Tcp;
 using System.Runtime.Remoting.Channels;
 using System.Net.Sockets;
+using System.Diagnostics;
 
 namespace client
 {
@@ -38,7 +39,9 @@ namespace client
                       
             
             
-            Console.WriteLine("New client created");
+            Console.WriteLine("Client " + name +" created");
+            Console.WriteLine("PID: " +
+                Process.GetCurrentProcess().Id.ToString());
             System.Console.ReadLine();
         }
     }

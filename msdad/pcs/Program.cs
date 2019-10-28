@@ -6,6 +6,8 @@ using System.Runtime.Remoting.Channels.Tcp;
 using System.Runtime.Remoting.Channels;
 using System.Net.Sockets;
 using System.IO;
+using System.Diagnostics;
+
 
 namespace pcs
 {
@@ -47,7 +49,7 @@ namespace lib{
         public ClientInfo createClient(string name, string port){
             string cPath = AppDomain.CurrentDomain.BaseDirectory;
             string client = Path.Combine(cPath, "../../../../client/bin/Debug/net472/client.exe");
-            var proc = System.Diagnostics.Process.Start(client, name + ' ' + port);
+            Process proc = Process.Start(client, name + ' ' + port);
 
             //return new ClientInfo(name, "localhost",port); //TODO populate
             System.Console.WriteLine("ClientInfo");
@@ -58,7 +60,7 @@ namespace lib{
         public ServerInfo createServer(string port){
             string cPath = AppDomain.CurrentDomain.BaseDirectory;
             string server = Path.Combine(cPath, "../../../../server/bin/Debug/net472/server.exe");
-            var proc = System.Diagnostics.Process.Start(server, port);
+            Process proc = Process.Start(server, port);
 
             //return new ServerInfo("localhost:///", port); //TODO populate
             return null;
