@@ -5,5 +5,30 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="puppetMaster.MainWindow"
         Title="puppetMaster">
-    <Button Name="myButton" Content= "pcsTest" Click="pcsTest"/>
+    <DockPanel Name="WindowPanel" 
+                
+                >  <!--window panel-->
+        <!--PCS PANEL-->
+        <StackPanel DockPanel.Dock="Top">
+                    
+        <!--IP PANEL-->
+            <StackPanel DockPanel.Dock="Bottom" >
+                <TextBox Name="PcsIp"/>
+                <Button Content="connect"/>
+                <Button Content="create client"/>
+                <Button Content="create server"/>
+            </StackPanel>
+
+
+        </StackPanel>
+        <StackPanel Name="ClientPanel" >
+
+            <DropDown SelectedIndex="0">
+                <DropDownItem Content="Cliente 1"/>
+                <DropDownItem Content="Cliente 2"/>
+                <DropDownItem Content="Cliente 3"/>
+            </DropDown>
+
+        </StackPanel>
+    </DockPanel> <!--window panel-->
 </Window>
