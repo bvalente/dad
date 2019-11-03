@@ -7,6 +7,7 @@ using System;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels.Tcp;
 using System.Runtime.Remoting.Channels;
+using System.Net;
 using System.Net.Sockets;
 using System.Windows.Input;
 using lib;
@@ -33,6 +34,11 @@ namespace puppetMaster{
             Console.WriteLine(serverPanel.Name + " Loaded.");
             pcsIp = this.Find<TextBox>("PcsIp");
             Console.WriteLine(pcsIp.Name + " Loaded.");
+
+            //create TCP channel on port 8075
+            string port = "8075";
+            TcpChannel channel = new TcpChannel(Int32.Parse(port));
+            ChannelServices.RegisterChannel(channel, false);
 
         }
 
@@ -94,11 +100,28 @@ namespace puppetMaster{
         public void createPcs(object sender, RoutedEventArgs e){
 
             string ip = pcsIp.Text;
-            //TODO check if valid ip address
+            
+            //check if ip is valid
+            IPAddress address = null;
+            if( ! IPAddress.TryParse(ip, out address)){
+                //localhost doenst work, use 127.0.0.1
+                Console.WriteLine(ip + " is not a valid ip address.");
+                return;
+            }
 
-            //TODO connect to pcs
+            //connect to pcs
+            IPCS pcs = (IPCS) Activator.GetObject(
+                    (typeof(IPCS)),
+                    "tcp://"+ip+":8070/PCS");
 
-            //TODO create pcs UI structure
+            //test pcs connectivity
+            try{
+                System.Console.WriteLine(pcs.ping());
+            } catch (Exception ex){
+                System.Console.WriteLine("PCS NOT GREAT, RAPE");
+                Console.WriteLine(ex.Message);
+            }
+
             //create panel to organize everyting
             StackPanel panel = new StackPanel();
             panel.Orientation = Avalonia.Controls.Orientation.Horizontal;

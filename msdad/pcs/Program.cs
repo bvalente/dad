@@ -36,7 +36,7 @@ namespace pcs{
                 typeof(PCS));
             
             //DEBUG
-            Console.WriteLine("New PCS created");
+            Console.WriteLine("New PCS created on "+ ip);
 
             //prevent process from closing
             System.Console.ReadLine();
@@ -53,7 +53,7 @@ namespace pcs{
         }
 
         public string ping(){
-            return "PCS is online";
+            return "PCS "+ip+" is online";
         }
 
         //TODO: VOLTAR A VER ESTA MERDA 
