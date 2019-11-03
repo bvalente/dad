@@ -13,13 +13,8 @@ namespace client{
     //interface for the server
     public class Client : MarshalByRefObject, IClient{
 
-        //client name
-        public string name;
-
-        //tcp port
-        public string port;
-
-        //server interface
+        public string Name;
+        public string Port;
         private IServer server;
                 
         //meetings database
@@ -28,11 +23,13 @@ namespace client{
         //constructor
         public Client(string name, string port){
 
-            this.name = name;
-            this.port = port;
+            this.Name = name;
+            this.Port = port;
 			meetingList = new List<MeetingProposal>();
 			//TODO import meetings data
 
+            //TODO IMPORTANT receive server ip and connect to that
+            /*
             server = (IServer) Activator.GetObject(typeof(IServer), "tcp://localhost:8090/Server"); //TODO: fazer no caso em que ha varias maquinas
             
             try{
@@ -41,8 +38,8 @@ namespace client{
                 Console.WriteLine("Could not locate server");
 				Console.WriteLine(ex.Message);
             }
+            */
 
-            Console.WriteLine("hi OwO");
         }
 
         //simple ping 
@@ -69,7 +66,7 @@ namespace client{
 
         //simple ping
         public string ping(){
-            return "Client Puppeteer is online";
+            return "Client "+client.Name+" is online";
         }
 
         //list all available meetings

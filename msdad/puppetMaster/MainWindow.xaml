@@ -15,7 +15,7 @@
                         
             <!--IP PANEL-->
                 <StackPanel Orientation="Horizontal">
-                    <TextBox Name="PcsIp" Width="100"/>
+                    <TextBox Name="PcsIp" Width="100" Text="127.0.0.1"/>
                     <Button Content="connect" Click="createPcs"/>
                 </StackPanel>
 

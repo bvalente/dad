@@ -47,6 +47,7 @@ namespace pcs{
 
         string ip;
         //ports are automatically atributed
+        //WARNING only 10 clients and 10 server are available per pcs atm
         int clientPort = 8080;
         int serverPort = 8090;
 
@@ -59,22 +60,18 @@ namespace pcs{
             return "PCS "+ip+" is online";
         }
 
-        //TODO: VOLTAR A VER ESTA MERDA 
-        //NAO SABER SE FUNCIONA
-        //O FELI E GAY
         public ClientInfo createClient(string name){
             //get next client port
             string port = clientPort.ToString();
             clientPort++;
 
+            //create client process
             string cPath = AppDomain.CurrentDomain.BaseDirectory;
             string filePath = Path.Combine(cPath,
                  "../../../../client/bin/Debug/net472/client.exe");
             Process client = Process.Start(filePath, name + ' ' + port);
 
-            return new ClientInfo(name, "localhost",port); //TODO populate
-            System.Console.WriteLine("ClientInfo");
-            return null;
+            return new ClientInfo(name, ip, port);
         }
 
         public ServerInfo createServer(){

@@ -45,7 +45,7 @@ namespace client{
             
             //DEBUG
             Console.WriteLine("Client " + name +" created");
-            Console.WriteLine("PID: " +
+            Console.WriteLine(client.Name + " PID: " +
                 Process.GetCurrentProcess().Id.ToString());
 
             //prevents process from closing

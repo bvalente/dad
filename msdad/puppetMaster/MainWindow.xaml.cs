@@ -4,6 +4,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
 using System;
+using System.Threading;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels.Tcp;
 using System.Runtime.Remoting.Channels;
@@ -25,9 +26,8 @@ namespace puppetMaster{
 
         //PuppetMaster variables
         //client and server dictionaries
-        //dont forget to initialize
-        Dictionary<string,IClientPuppeteer> clientList;
-        Dictionary<string,IServerPuppeteer> serverList;
+        Dictionary<ClientInfo,IClientPuppeteer> clientList;
+        Dictionary<ServerInfo,IServerPuppeteer> serverList;
         int clientCounter = 0;
 
 
@@ -37,13 +37,13 @@ namespace puppetMaster{
 
             //load all necessary components
             pcsPanel = this.Find<StackPanel>("PcsPanel");
-            Console.WriteLine(pcsPanel.Name + " Loaded.");
+            Console.WriteLine("Loading: " + pcsPanel.Name);
             clientPanel = this.Find<StackPanel>("ClientPanel");
-            Console.WriteLine(clientPanel.Name + " Loaded.");
+            Console.WriteLine("Loading: " + clientPanel.Name);
             serverPanel = this.Find<StackPanel>("ServerPanel");
-            Console.WriteLine(serverPanel.Name + " Loaded.");
+            Console.WriteLine("Loading: " + serverPanel.Name);
             pcsIp = this.Find<TextBox>("PcsIp");
-            Console.WriteLine(pcsIp.Name + " Loaded.");
+            Console.WriteLine("Loading: " + pcsIp.Name);
 
             //create TCP channel on port 8075
             string port = "8075";
@@ -51,8 +51,8 @@ namespace puppetMaster{
             ChannelServices.RegisterChannel(channel, false);
 
             //initialize dictionaries
-            clientList = new Dictionary<string, IClientPuppeteer>();
-            serverList = new Dictionary<string, IServerPuppeteer>();
+            clientList = new Dictionary<ClientInfo, IClientPuppeteer>();
+            serverList = new Dictionary<ServerInfo, IServerPuppeteer>();
 
         }
 
@@ -62,54 +62,6 @@ namespace puppetMaster{
         }
 
         //Buttons here! only 499$ each
-
-        public void pcsTest(Object sender, RoutedEventArgs e){
-            string port = "8075";
-
-            //create tcp channel
-            TcpChannel channel = new TcpChannel(Int32.Parse(port));
-            ChannelServices.RegisterChannel(channel, false);
-
-            //get pcs
-            IPCS pcs = (IPCS) Activator.GetObject(
-                    (typeof(IPCS)),
-                    "tcp://localhost:8070/PCS");
-
-            //test pcs connectivity
-            try{
-                System.Console.WriteLine(pcs.ping());
-            } catch (Exception ex){
-                System.Console.WriteLine("PCS NOT GREAT, RAPE");
-                Console.WriteLine(ex.Message);
-            }
-
-            //create client trough pcs
-            //pcs.createClient("AndreValenteNotGayYesNoUYeah", "8080");
-            pcs.createClient("AndreValenteNotGayYesNoUYeah");
-        }
-
-        public void pcsTest2(Object sender, RoutedEventArgs e){
-            //test
-            TextBlock block = new TextBlock();
-            block.Text = "general kenoby";
-
-            Button button = new Button();
-            button.Content = "test button";
-            Action<object> myAction = pcsTest3;
-            CommandHandler myCommand = new CommandHandler(myAction,true);
-            button.Command = myCommand;
-            button.CommandParameter = "hallelujah";
-            
-            pcsPanel.Children.Add(block);
-            pcsPanel.Children.Add(button);
-
-        }
-
-        public void pcsTest3(object print){
-            //test
-            Console.WriteLine("ewan mcgregor");
-            Console.WriteLine(print.ToString());
-        }
 
         //connects to a pcs and creates the sctructure with buttons
         public void createPcs(object sender, RoutedEventArgs e){
@@ -126,14 +78,14 @@ namespace puppetMaster{
 
             //connect to pcs
             IPCS pcs = (IPCS) Activator.GetObject(
-                    (typeof(IPCS)),
+                    typeof(IPCS),
                     "tcp://"+ip+":8070/PCS");
 
             //test pcs connectivity
             try{
                 System.Console.WriteLine(pcs.ping());
             } catch (Exception ex){
-                System.Console.WriteLine("PCS NOT GREAT, RAPE");
+                System.Console.WriteLine("pcs connectivity failed.");
                 Console.WriteLine(ex.Message);
             }
 
@@ -143,11 +95,12 @@ namespace puppetMaster{
             TextBlock block = new TextBlock();
             block.Text = ip;
 
+            //create client button
             Button client = new Button();
             client.Content = "create client";
             Action<object> clientAction = createClient;
             client.Command = new CommandHandler(clientAction,true);
-            client.CommandParameter = pcs;//pcs object?
+            client.CommandParameter = pcs;
 
             Button server = new Button();
             server.Content = "create server";
@@ -172,18 +125,42 @@ namespace puppetMaster{
 
         }
 
+        //create client button action
         public void createClient(object pcs){
+            //cast to IPCS object type
             IPCS PCS = (IPCS) pcs;
             ClientInfo clientInfo = PCS.createClient("client" + clientCounter.ToString());
             clientCounter++;
-            //debug
-            Console.WriteLine(clientInfo.Name);
+
+            //connect to client puppeteer
+            IClientPuppeteer client = (IClientPuppeteer) Activator.GetObject(
+                    typeof(IClientPuppeteer),
+                    "tcp://"+clientInfo.Url+":"+clientInfo.Port+"/ClientPuppeteer");
+
+
+            //test client connectivity
+            Thread.Sleep(1000); //wait for client bootup
+            try{
+                System.Console.WriteLine(client.ping());
+            } catch (Exception ex){
+                System.Console.WriteLine("client connectivity failed.");
+                Console.WriteLine(ex.Message);
+            }
+
+            clientList.Add(clientInfo,client);
+
+            //TODO add client to the UI
+        }
+
+        public void createServer(object pcs){
+            //TODO
+            return;
         }
 
     }
 
+    //credit: https://stackoverflow.com/questions/35370749/passing-parameters-to-mvvm-command/35371204
     public class CommandHandler : ICommand{
-        //credit: https://stackoverflow.com/questions/35370749/passing-parameters-to-mvvm-command/35371204
         private Action<object> _action;
         private bool _canExecute;
         
