@@ -1,15 +1,17 @@
 using System.Collections.Generic;
+using System;
 
 namespace lib{
 
     // class with important client info
-    public class ClientInfo{
+    [Serializable]
+    public class ClientInfo {
 
         public string Name;
         public string Url;
         public string Port;
 
-        ClientInfo(string name, string url, string port){
+        public ClientInfo(string name, string url, string port){
             this.Name = name;
             this.Url = url;
             this.Port = port;

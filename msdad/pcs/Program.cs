@@ -46,6 +46,9 @@ namespace pcs{
     class PCS : MarshalByRefObject, IPCS{
 
         string ip;
+        //ports are automatically atributed
+        int clientPort = 8080;
+        int serverPort = 8090;
 
         //constructor
         public PCS(string ip){
@@ -59,18 +62,26 @@ namespace pcs{
         //TODO: VOLTAR A VER ESTA MERDA 
         //NAO SABER SE FUNCIONA
         //O FELI E GAY
-        public ClientInfo createClient(string name, string port){
+        public ClientInfo createClient(string name){
+            //get next client port
+            string port = clientPort.ToString();
+            clientPort++;
+
             string cPath = AppDomain.CurrentDomain.BaseDirectory;
             string filePath = Path.Combine(cPath,
                  "../../../../client/bin/Debug/net472/client.exe");
             Process client = Process.Start(filePath, name + ' ' + port);
 
-            //return new ClientInfo(name, "localhost",port); //TODO populate
+            return new ClientInfo(name, "localhost",port); //TODO populate
             System.Console.WriteLine("ClientInfo");
             return null;
         }
 
-        public ServerInfo createServer(string port){
+        public ServerInfo createServer(){
+            //get next server port 
+            string port = serverPort.ToString();
+            serverPort++;
+
             string cPath = AppDomain.CurrentDomain.BaseDirectory;
             string filePath = Path.Combine(cPath,
                  "../../../../server/bin/Debug/net472/server.exe");

@@ -1,13 +1,16 @@
+using System;
+
 namespace lib{
 
     // class with important server info
     // TODO discuss serverInfo important values
+    [Serializable]
     public class ServerInfo{
 
         public string Url;
         public string Port;
 
-        ServerInfo(string url, string port){
+        public ServerInfo(string url, string port){
             this.Url = url;
             this.Port = port;
         }

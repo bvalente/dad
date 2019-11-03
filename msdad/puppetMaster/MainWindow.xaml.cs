@@ -10,16 +10,26 @@ using System.Runtime.Remoting.Channels;
 using System.Net;
 using System.Net.Sockets;
 using System.Windows.Input;
+using System.Collections.Generic;
 using lib;
 
 namespace puppetMaster{
 
     public class MainWindow : Window{
 
+        //Avalonia UI
         StackPanel pcsPanel;
         StackPanel clientPanel;
         StackPanel serverPanel;
         TextBox pcsIp;
+
+        //PuppetMaster variables
+        //client and server dictionaries
+        //dont forget to initialize
+        Dictionary<string,IClientPuppeteer> clientList;
+        Dictionary<string,IServerPuppeteer> serverList;
+        int clientCounter = 0;
+
 
         public MainWindow(){
 
@@ -39,6 +49,10 @@ namespace puppetMaster{
             string port = "8075";
             TcpChannel channel = new TcpChannel(Int32.Parse(port));
             ChannelServices.RegisterChannel(channel, false);
+
+            //initialize dictionaries
+            clientList = new Dictionary<string, IClientPuppeteer>();
+            serverList = new Dictionary<string, IServerPuppeteer>();
 
         }
 
@@ -70,7 +84,8 @@ namespace puppetMaster{
             }
 
             //create client trough pcs
-            pcs.createClient("AndreValenteNotGayYesNoUYeah", "8080");
+            //pcs.createClient("AndreValenteNotGayYesNoUYeah", "8080");
+            pcs.createClient("AndreValenteNotGayYesNoUYeah");
         }
 
         public void pcsTest2(Object sender, RoutedEventArgs e){
@@ -127,9 +142,13 @@ namespace puppetMaster{
             panel.Orientation = Avalonia.Controls.Orientation.Horizontal;
             TextBlock block = new TextBlock();
             block.Text = ip;
+
             Button client = new Button();
             client.Content = "create client";
-            //TODO program client connection
+            Action<object> clientAction = createClient;
+            client.Command = new CommandHandler(clientAction,true);
+            client.CommandParameter = pcs;//pcs object?
+
             Button server = new Button();
             server.Content = "create server";
             //TODO program server connection
@@ -151,6 +170,14 @@ namespace puppetMaster{
             //add panel to window
             pcsPanel.Children.Add(panel);
 
+        }
+
+        public void createClient(object pcs){
+            IPCS PCS = (IPCS) pcs;
+            ClientInfo clientInfo = PCS.createClient("client" + clientCounter.ToString());
+            clientCounter++;
+            //debug
+            Console.WriteLine(clientInfo.Name);
         }
 
     }

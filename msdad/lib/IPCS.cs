@@ -5,9 +5,9 @@ namespace lib
         string ping();
 
         // create client and return important info
-        ClientInfo createClient(string name, string port);
+        ClientInfo createClient(string name);
 
         // create server and return important info
-        ServerInfo createServer(string port);
+        ServerInfo createServer();
     }
 }
