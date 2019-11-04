@@ -25,6 +25,7 @@ namespace puppetMaster{
         TextBox pcsIp;
 
         //PuppetMaster variables
+        PuppetMaster puppetMaster;
         //client and server dictionaries
         Dictionary<ClientInfo,IClientPuppeteer> clientList;
         Dictionary<ServerInfo,IServerPuppeteer> serverList;
@@ -34,7 +35,7 @@ namespace puppetMaster{
         public MainWindow(){
 
             InitializeComponent();
-
+            /*
             //load all necessary components
             pcsPanel = this.Find<StackPanel>("PcsPanel");
             Console.WriteLine("Loading: " + pcsPanel.Name);
@@ -44,6 +45,8 @@ namespace puppetMaster{
             Console.WriteLine("Loading: " + serverPanel.Name);
             pcsIp = this.Find<TextBox>("PcsIp");
             Console.WriteLine("Loading: " + pcsIp.Name);
+            */
+            puppetMaster = new PuppetMaster();//TODO make it singleton
 
             //create TCP channel on port 8075
             string port = "8075";
@@ -63,6 +66,7 @@ namespace puppetMaster{
 
         //Buttons here! only 499$ each
 
+        //NOT IN USE
         //connects to a pcs and creates the sctructure with buttons
         public void createPcs(object sender, RoutedEventArgs e){
 
@@ -125,6 +129,7 @@ namespace puppetMaster{
 
         }
 
+        //NOT IN USE
         //create client button action
         public void createClient(object pcs){
             //cast to IPCS object type
@@ -159,6 +164,7 @@ namespace puppetMaster{
 
     }
 
+    //PROBABLY NOT GONNA USE IT ANYMORE
     //credit: https://stackoverflow.com/questions/35370749/passing-parameters-to-mvvm-command/35371204
     public class CommandHandler : ICommand{
         private Action<object> _action;
