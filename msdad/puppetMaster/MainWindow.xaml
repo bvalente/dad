@@ -46,7 +46,8 @@
 
                 <TextBlock Text="Script file:"/>
                 <TextBox Name="PuppetMasterScript" Width="100"/>
-                <Button Name="PuppetMasterScriptButton" Content="execute"/>
+                <Button Name="PuppetMasterScriptButton" Content="execute" 
+                        Click="executeScript"/>
                 <!--add command to execute in button-->
 
             </StackPanel>

@@ -19,43 +19,37 @@ namespace puppetMaster{
     public class MainWindow : Window{
 
         //Avalonia UI
-        StackPanel pcsPanel;
         StackPanel clientPanel;
         StackPanel serverPanel;
+        TextBox puppetMasterScript;
+        Button puppetMasterScriptButton;
+        //unused
+        StackPanel pcsPanel;
         TextBox pcsIp;
 
         //PuppetMaster variables
         PuppetMaster puppetMaster;
-        //client and server dictionaries
-        Dictionary<ClientInfo,IClientPuppeteer> clientList;
-        Dictionary<ServerInfo,IServerPuppeteer> serverList;
-        int clientCounter = 0;
-
 
         public MainWindow(){
 
             InitializeComponent();
-            /*
+            
             //load all necessary components
-            pcsPanel = this.Find<StackPanel>("PcsPanel");
-            Console.WriteLine("Loading: " + pcsPanel.Name);
             clientPanel = this.Find<StackPanel>("ClientPanel");
             Console.WriteLine("Loading: " + clientPanel.Name);
             serverPanel = this.Find<StackPanel>("ServerPanel");
             Console.WriteLine("Loading: " + serverPanel.Name);
-            pcsIp = this.Find<TextBox>("PcsIp");
-            Console.WriteLine("Loading: " + pcsIp.Name);
-            */
+            puppetMasterScript = this.Find<TextBox>("PuppetMasterScript");
+            Console.WriteLine("Loading: " + puppetMasterScript.Name);
+            puppetMasterScriptButton = this.Find<Button>("PuppetMasterScriptButton");
+            Console.WriteLine("Loading: " + puppetMasterScriptButton.Name);
+            
             puppetMaster = new PuppetMaster();//TODO make it singleton
 
             //create TCP channel on port 8075
             string port = "8075";
             TcpChannel channel = new TcpChannel(Int32.Parse(port));
             ChannelServices.RegisterChannel(channel, false);
-
-            //initialize dictionaries
-            clientList = new Dictionary<ClientInfo, IClientPuppeteer>();
-            serverList = new Dictionary<ServerInfo, IServerPuppeteer>();
 
         }
 
@@ -65,6 +59,22 @@ namespace puppetMaster{
         }
 
         //Buttons here! only 499$ each
+
+        //load script and run it
+        public void executeScript(object sender, RoutedEventArgs e){
+
+            //load file and get commands
+            string fileName = puppetMasterScript.Text;
+            string cPath = AppDomain.CurrentDomain.BaseDirectory;
+            string filePath = Path.Combine(cPath,
+                 "../../../" + fileName);
+            string[] commands = System.IO.File.ReadAllLines(filePath);
+
+            //execute puppetMaster.executeCommand n times
+            foreach (string command in commands){
+                puppetMaster.executeCommand(command);
+            }
+        }
 
         //NOT IN USE
         //connects to a pcs and creates the sctructure with buttons
