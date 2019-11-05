@@ -12,6 +12,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Windows.Input;
 using System.Collections.Generic;
+using System.IO;
 using lib;
 
 namespace puppetMaster{
@@ -67,7 +68,7 @@ namespace puppetMaster{
             string fileName = puppetMasterScript.Text;
             string cPath = AppDomain.CurrentDomain.BaseDirectory;
             string filePath = Path.Combine(cPath,
-                 "../../../" + fileName);
+                 "../../../../scripts/" + fileName);
             string[] commands = System.IO.File.ReadAllLines(filePath);
 
             //execute puppetMaster.executeCommand n times
@@ -143,6 +144,8 @@ namespace puppetMaster{
         //create client button action
         public void createClient(object pcs){
             //cast to IPCS object type
+            int clientCounter = 0; //compile purpose
+            Dictionary<ClientInfo,IClientPuppeteer> clientList = new Dictionary<ClientInfo, IClientPuppeteer>();//compile purpose
             IPCS PCS = (IPCS) pcs;
             ClientInfo clientInfo = PCS.createClient("client" + clientCounter.ToString());
             clientCounter++;

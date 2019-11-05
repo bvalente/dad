@@ -14,7 +14,7 @@ This project consists on 5 programs
 
 | Program | Ports |
 | ------- | ----: |
-| PCS | 8070 |
+| PCS | 10000 |
 | PuppetMaster | 8075 |
 | Servers | 8090-8099 |
 | Client | 8080-8089 |

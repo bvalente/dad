@@ -16,7 +16,7 @@ namespace pcs{
         static void Main(string[] args){
             
             string ip;
-            string port = "8070";
+            string port = "10000";
 
             if(args.Length == 0){
                 ip = "127.0.0.1";
