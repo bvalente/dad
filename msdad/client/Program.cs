@@ -11,26 +11,23 @@ using System.Threading;
 namespace client{
 
     class Program{
-
-        //args - name, port
+        
         static void Main(string[] args){
 
-            string name = args[0];
-            string port;
+            string username = args[0];
+            string client_url = args[1];
+            string server_url = args[2];
+            string script_file = args[3];
 
-            //use default port if none especified
-             if(args.Length < 2){
-                port = "8080";
-            } else {
-                port = args[1];
-            }
-            
+            //tcp://localhost:8080/Client --> example
+            string port = client_url.Split(':')[2].Split('/')[0];
+
             //create tcp channel
             TcpChannel channel = new TcpChannel(Int32.Parse(port));
             ChannelServices.RegisterChannel(channel, false); 
 
             //create client
-            Client client = new Client(name, port);
+            Client client = new Client(username, client_url, server_url, script_file);
             RemotingServices.Marshal(
                 client,
                 "Client",
@@ -44,8 +41,8 @@ namespace client{
                 typeof(ClientPuppeteer));
             
             //DEBUG
-            Console.WriteLine("Client " + name +" created");
-            Console.WriteLine(client.Name + " PID: " +
+            Console.WriteLine("Client " + username +" created");
+            Console.WriteLine(client.username + " PID: " +
                 Process.GetCurrentProcess().Id.ToString());
 
             //prevents process from closing

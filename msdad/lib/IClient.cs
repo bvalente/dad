@@ -7,14 +7,16 @@ namespace lib{
     [Serializable]
     public class ClientInfo {
 
-        public string Name;
-        public string Url;
-        public string Port;
+        public string username;
+        public string client_url;
+        public string server_url;
+        public string script_file;
 
-        public ClientInfo(string name, string url, string port){
-            this.Name = name;
-            this.Url = url;
-            this.Port = port;
+        public ClientInfo(string username, string client_url, string server_url, string script_file){
+            this.username = username;
+            this.client_url = client_url;
+            this.server_url = server_url;
+            this.script_file = script_file;
         }
     }
 

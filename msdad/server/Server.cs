@@ -12,7 +12,11 @@ namespace server{
     public class Server : MarshalByRefObject, IServer{
 
         //tcp port
-        public string port;
+        public string server_id;
+        public string url;
+        public int max_faults;
+        public int min_delay;
+        public int max_delay;
 
         //client database
         Dictionary<string, IClient> clientList;
@@ -21,9 +25,14 @@ namespace server{
         List<MeetingProposal> meetingList;
 
         //constructor
-        public Server(string port){
+        public Server(string server_id, string url, int max_faults, int min_delay, int max_delay){
 
-            this.port = port;
+            this.server_id = server_id;
+            this.url = url;
+            this.max_faults = max_faults;
+            this.min_delay = min_delay;
+            this.max_delay = max_delay;
+
             clientList = new Dictionary<string, IClient>();
 			meetingList = new List<MeetingProposal>();
             //TODO load client/meetings database
@@ -61,7 +70,7 @@ namespace server{
 
         public void addClient(ClientInfo clientInfo){
             //check if there is a client with the same name
-            if (clientList.ContainsKey(clientInfo.Name)){
+            if (clientList.ContainsKey(clientInfo.username)){
                 //TODO throw exception
                 return;
             }
@@ -69,8 +78,8 @@ namespace server{
             //add client
             IClient client = (IClient) Activator.GetObject(
                         typeof(IClient),
-                        clientInfo.Url + ':' + clientInfo.Port + "/Client");
-            clientList.Add(clientInfo.Name,client);
+                        clientInfo.client_url);
+            clientList.Add(clientInfo.username,client);
 
             //send client info to other servers?
         }
@@ -89,5 +98,15 @@ namespace server{
         public string ping(){
             return "Server Puppeteer is online";
         }
+        
+        public string status(){
+            return null;
+            //TODO: voltar aqui 
+        }
+
+        public void kill(){
+            Environment.Exit(0);
+        }
+
     }
 }

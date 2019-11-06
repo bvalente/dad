@@ -115,7 +115,7 @@ namespace puppetMaster{
             Console.WriteLine("Loading: " + waitTimeBox.Name);
 
             
-            puppetMaster = new PuppetMaster();//TODO make it singleton
+            puppetMaster = PuppetMaster.getPuppetMaster();
 
             //create TCP channel on port 8075
             string port = "8075";
@@ -155,7 +155,11 @@ namespace puppetMaster{
             string min_delay = createServer_min_delay.Text;
             string max_delay =  createServer_max_delay.Text;
 
-            puppetMaster.createServer(server_id, url, max_faults, min_delay, max_delay);
+            ServerInfo server = puppetMaster.createServer(server_id, url, max_faults, min_delay, max_delay);
+
+            TextBlock block = new TextBlock();
+            block.Text = server.server_id;
+            serverPanel.Children.Add(block);
         }
 
         public void createClient(object sender, RoutedEventArgs e){
@@ -165,7 +169,12 @@ namespace puppetMaster{
             string server_url = createClient_server_url.Text;
             string script_file = createClient_script_file.Text;
 
-            puppetMaster.createClient(username, url, server_url, script_file);
+            ClientInfo client = puppetMaster.createClient(username, url, server_url, script_file);
+
+            TextBlock block = new TextBlock();
+            block.Name = client.username;
+            block.Text = client.username;
+            clientPanel.Children.Add(block);
         }
 
         public void addRoom(object sender, RoutedEventArgs e){
@@ -185,6 +194,9 @@ namespace puppetMaster{
 
         public void crash(object sender, RoutedEventArgs e){
             string server_id = crashServerID.Text;
+            puppetMaster.crashServer(server_id);
+
+            //TODO remove server from UI
         }
 
         public void freezeServer(object sender, RoutedEventArgs e){
@@ -204,128 +216,6 @@ namespace puppetMaster{
             string time = waitTimeBox.Text;
             puppetMaster.wait(time);
         }
-
-        //NOT IN USE
-        //connects to a pcs and creates the sctructure with buttons
-        public void createPcs(object sender, RoutedEventArgs e){
-
-            string ip = pcsIp.Text;
-            
-            //check if ip is valid
-            IPAddress address = null;
-            if( ! IPAddress.TryParse(ip, out address)){
-                //localhost doenst work, use 127.0.0.1
-                Console.WriteLine(ip + " is not a valid ip address.");
-                return;
-            }
-
-            //connect to pcs
-            IPCS pcs = (IPCS) Activator.GetObject(
-                    typeof(IPCS),
-                    "tcp://"+ip+":8070/PCS");
-
-            //test pcs connectivity
-            try{
-                System.Console.WriteLine(pcs.ping());
-            } catch (Exception ex){
-                System.Console.WriteLine("pcs connectivity failed.");
-                Console.WriteLine(ex.Message);
-            }
-
-            //create panel to organize everyting
-            StackPanel panel = new StackPanel();
-            panel.Orientation = Avalonia.Controls.Orientation.Horizontal;
-            TextBlock block = new TextBlock();
-            block.Text = ip;
-
-            //create client button
-            Button client = new Button();
-            client.Content = "create client";
-            Action<object> clientAction = createClient;
-            client.Command = new CommandHandler(clientAction,true);
-            client.CommandParameter = pcs;
-
-            Button server = new Button();
-            server.Content = "create server";
-            //TODO program server connection
-            /*
-            Button disconnect = new Button();
-            disconnect.Content = "disconnect";
-            */
-            //TODO program disconect
-            //DISCUSS is this necessary???
-            //disconect every client and server with same ip
-
-
-            //add text and button to panel
-            panel.Children.Add(block);
-            panel.Children.Add(client);
-            panel.Children.Add(server);
-            //panel.Children.Add(disconnect);
-            
-            //add panel to window
-            pcsPanel.Children.Add(panel);
-
-        }
-
-        //NOT IN USE
-        //create client button action
-        public void createClient(object pcs){
-            //cast to IPCS object type
-            int clientCounter = 0; //compile purpose
-            Dictionary<ClientInfo,IClientPuppeteer> clientList = new Dictionary<ClientInfo, IClientPuppeteer>();//compile purpose
-            IPCS PCS = (IPCS) pcs;
-            ClientInfo clientInfo = PCS.createClient("client" + clientCounter.ToString());
-            clientCounter++;
-
-            //connect to client puppeteer
-            IClientPuppeteer client = (IClientPuppeteer) Activator.GetObject(
-                    typeof(IClientPuppeteer),
-                    "tcp://"+clientInfo.Url+":"+clientInfo.Port+"/ClientPuppeteer");
-
-
-            //test client connectivity
-            Thread.Sleep(1000); //wait for client bootup
-            try{
-                System.Console.WriteLine(client.ping());
-            } catch (Exception ex){
-                System.Console.WriteLine("client connectivity failed.");
-                Console.WriteLine(ex.Message);
-            }
-
-            clientList.Add(clientInfo,client);
-
-            //TODO add client to the UI
-        }
-
-        public void createServer(object pcs){
-            //TODO
-            //return;
-        }
-
-    }
-
-    //PROBABLY NOT GONNA USE IT ANYMORE
-    //credit: https://stackoverflow.com/questions/35370749/passing-parameters-to-mvvm-command/35371204
-    public class CommandHandler : ICommand{
-        private Action<object> _action;
-        private bool _canExecute;
         
-        public CommandHandler(Action<object> action, bool canExecute){
-            _action = action;
-            _canExecute = canExecute;
-        }
-
-        public bool CanExecute(object parameter){
-
-            return _canExecute;
-        }
-
-        public event EventHandler CanExecuteChanged;
-
-        public void Execute(object parameter){
-
-            _action(parameter);
-        }
     }
 }

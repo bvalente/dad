@@ -15,28 +15,21 @@ namespace pcs{
 
         static void Main(string[] args){
             
-            string ip;
             string port = "10000";
-
-            if(args.Length == 0){
-                ip = "127.0.0.1";
-            } else {
-                ip = args[0];
-            }
 
             //create tcp channel
             TcpChannel channel = new TcpChannel(Int32.Parse(port));
             ChannelServices.RegisterChannel(channel, false); 
 
             //create PCS
-            PCS pcs = new PCS(ip);
+            PCS pcs = new PCS();
             RemotingServices.Marshal(
                 pcs,
                 "PCS",
                 typeof(PCS));
             
             //DEBUG
-            Console.WriteLine("New PCS created on "+ ip);
+            Console.WriteLine("New PCS created");
 
             //prevent process from closing
             System.Console.ReadLine();
@@ -45,47 +38,33 @@ namespace pcs{
 
     class PCS : MarshalByRefObject, IPCS{
 
-        string ip;
-        //ports are automatically atributed
-        //WARNING only 10 clients and 10 server are available per pcs atm
-        int clientPort = 8080;
-        int serverPort = 8090;
-
-        //constructor
-        public PCS(string ip){
-            this.ip = ip;
-        }
-
         public string ping(){
-            return "PCS "+ip+" is online";
+            return "PCS is online";
         }
 
-        public ClientInfo createClient(string name){
-            //get next client port
-            string port = clientPort.ToString();
-            clientPort++;
+        public ClientInfo createClient(string username, string client_url, string server_url,
+                 string script_file){
 
             //create client process
             string cPath = AppDomain.CurrentDomain.BaseDirectory;
             string filePath = Path.Combine(cPath,
                  "../../../../client/bin/Debug/net472/client.exe");
-            Process client = Process.Start(filePath, name + ' ' + port);
+            Process client = Process.Start(filePath, 
+                username + ' ' + client_url + ' ' + server_url + ' ' + script_file);
 
-            return new ClientInfo(name, ip, port);
+            return new ClientInfo(username, client_url, server_url, script_file);
         }
 
-        public ServerInfo createServer(){
-            //get next server port 
-            string port = serverPort.ToString();
-            serverPort++;
-
+        public ServerInfo createServer(string server_id, string url,
+                 string max_faults, string min_delay, string max_delay){
+ 
             string cPath = AppDomain.CurrentDomain.BaseDirectory;
             string filePath = Path.Combine(cPath,
                  "../../../../server/bin/Debug/net472/server.exe");
-            Process server = Process.Start(filePath, port);
+            Process server = Process.Start(filePath, 
+                server_id + ' ' + url + ' ' + max_faults + ' ' + min_delay + ' ' + max_delay);
 
-            //return new ServerInfo("localhost:///", port); //TODO populate
-            return null;
+            return new ServerInfo(server_id, url, max_faults, min_delay, max_delay);
         }
     }
  }

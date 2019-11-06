@@ -13,21 +13,25 @@ namespace server{
         //args - port
         static void Main(string[] args){
 
-            string port;
-
-            //use defualt port if none is specified
-            if(args.Length == 0){
-                port = "8090";
-            } else {
-                port = args[0];
-            }
+            string server_id = args[0];
+            string url = args[1];
+            string max_faults = args[2];
+            string min_delay = args[3];
+            string max_delay = args[4];
+            
+            //tcp://localhost:8080/Client --> example
+            string port = url.Split(':')[2].Split('/')[0];
 
             //create tcp channel
             TcpChannel channel = new TcpChannel(Int32.Parse(port));
             ChannelServices.RegisterChannel(channel, false);
 
+            int max_faults_int = Int32.Parse(max_faults);
+            int min_delay_int = Int32.Parse(min_delay);
+            int max_delay_int = Int32.Parse(max_delay);
+            
             //create server
-            Server server = new Server(port);
+            Server server = new Server(server_id, url, max_faults_int, min_delay_int, max_delay_int);
             RemotingServices.Marshal(
                 server,
                 "Server",

@@ -13,18 +13,20 @@ namespace client{
     //interface for the server
     public class Client : MarshalByRefObject, IClient{
 
-        public string Name;
-        public string Port;
+        public string username;
+        public string client_url;
+        public string server_url;
+        public string script_file;
         private IServer server;
                 
         //meetings database
         List<MeetingProposal> meetingList;
         
         //constructor
-        public Client(string name, string port){
+        public Client(string username, string client_url, string server_url, string script_file){
 
-            this.Name = name;
-            this.Port = port;
+            this.username = username;
+            this.client_url = client_url;
 			meetingList = new List<MeetingProposal>();
 			//TODO import meetings data
 
@@ -66,7 +68,7 @@ namespace client{
 
         //simple ping
         public string ping(){
-            return "Client "+client.Name+" is online";
+            return "Client "+client.username+" is online";
         }
 
         //list all available meetings

@@ -7,12 +7,32 @@ namespace puppetMaster {
 
     class PuppetMaster{
 
+        //singleton
+        private static PuppetMaster puppetMaster;
+
+        //window
+        MainWindow window;
+
         //client and server dictionaries
-        Dictionary<ClientInfo,IClientPuppeteer> clientList;
-        Dictionary<ServerInfo,IServerPuppeteer> serverList;
+        Dictionary<string,ClientInfo> clientList;
+        Dictionary<string,ServerInfo> serverList;
 
         //no constructor()? 
         //TODO make singleton
+        private PuppetMaster(MainWindow window){
+            //save window
+            this.window = window;
+            //create dictionaries
+            clientList = new Dictionary<string, ClientInfo>();
+            serverList = new Dictionary<string, ServerInfo>();
+        }
+
+        public static PuppetMaster getPuppetMaster(MainWindow window){
+            if(puppetMaster == null){
+                puppetMaster = new PuppetMaster(window);
+            }
+            return puppetMaster;
+        }
 
         //receives a command and executes respective function
         public void executeCommand(string command){
@@ -59,7 +79,7 @@ namespace puppetMaster {
 
         }
 
-        public void createServer(string server_id, string server_url, string max_faults,
+        public ServerInfo createServer(string server_id, string server_url, string max_faults,
                                 string min_delay, string max_delay){
             
             //tcp://localhost:3000/server1 needs to be parsed
@@ -71,50 +91,75 @@ namespace puppetMaster {
             //create server
             ServerInfo serverInfo;
             try{
-                serverInfo = pcs.createServer(); //TODO change pcs interface
+                serverInfo = pcs.createServer(server_id, server_url,
+                         max_faults, min_delay, max_delay);
             } catch(Exception ex){
                 //TODO catch diferent types of execeptions
                 Console.WriteLine("pcs connection failed");
                 Console.WriteLine(ex.Message);
-                return;
+                return null;
             }
 
-            IServerPuppeteer server = (IServerPuppeteer) Activator.GetObject(
-                typeof(IServerPuppeteer),
-                server_url);
+            //save server
+            serverList.Add(server_id, serverInfo);
 
-            //TODO save server? 
+            return serverInfo;
             
         }
 
-        public void createClient(string username, string client_url, string server_url,
+        public ClientInfo createClient(string username, string client_url, string server_url,
                                 string script_file ){
 
             //connect to correct pcs
+            string[] urlParsed = server_url.Split(':');
+            string pcsUrl = urlParsed[0] + ':' + urlParsed[1] + ':' + "10000/PCS";
+            IPCS pcs = (IPCS) Activator.GetObject(typeof(IPCS), pcsUrl);
 
             //create client
+            ClientInfo clientInfo;
+            try{
+                clientInfo = pcs.createClient(username, client_url, server_url,
+                                script_file);
+            } catch(Exception ex){
+                //TODO catch diferent types of execeptions
+                Console.WriteLine("pcs connection failed");
+                Console.WriteLine(ex.Message);
+                return null;
+            }
 
-            //execute script_file if not null
+            //save client
+            clientList.Add(username, clientInfo);
+
+            return clientInfo;
         }
 
-        public void addRoom(string loctation, string capacity, string room_name){
+        public void addRoom(string location, string capacity, string room_name){
             
             //create room, pass it to all servers?
+            
         }
 
         public void status(){
 
             //make all servers and clients print status
+            
+
         }
 
         public void crashServer(string server_id){
 
             //crash server
+            ServerInfo serverInfo = serverList[server_id];
+            ServerPuppeteer server = (ServerPuppeteer) Activator.GetObject(
+                    typeof(ServerPuppeteer),
+                    serverInfo.url);
+            server.kill();
+
+            serverList.Remove(server_id);
         }
 
         public void freezeServer(string server_id){
-
-            //freeze server
+            
         }
 
         public void unfreezeServer(string server_id){
