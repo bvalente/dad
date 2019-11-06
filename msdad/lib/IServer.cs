@@ -41,7 +41,7 @@ namespace lib{
         string ping();
 
         //return server status
-        string stauts();
+        string status();
 
         //crash server
         void kill();

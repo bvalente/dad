@@ -105,6 +105,7 @@ namespace server{
         }
 
         public void kill(){
+            Console.WriteLine("Bye bye");
             Environment.Exit(0);
         }
 

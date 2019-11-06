@@ -21,6 +21,7 @@ namespace server{
             
             //tcp://localhost:8080/Client --> example
             string port = url.Split(':')[2].Split('/')[0];
+            string service = url.Split(':')[2].Split('/')[1];
 
             //create tcp channel
             TcpChannel channel = new TcpChannel(Int32.Parse(port));
@@ -34,14 +35,14 @@ namespace server{
             Server server = new Server(server_id, url, max_faults_int, min_delay_int, max_delay_int);
             RemotingServices.Marshal(
                 server,
-                "Server",
+                service,
                 typeof(Server));
 
             //create server puppeteer
             ServerPuppeteer puppeteer = new ServerPuppeteer(server);
             RemotingServices.Marshal(
                 puppeteer,
-                "ServerPuppeteer",
+                service + "Puppeteer",
                 typeof(ServerPuppeteer));
             
             //DEBUG

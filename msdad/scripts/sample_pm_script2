@@ -1,0 +1,3 @@
+Server server1 tcp://localhost:8090/server1 1 2 3
+Client client1 tcp://localhost:8080/client1 tcp://localhost:8090/server1 sample_client_script
+Client client2 tcp://localhost:8081/client2 tcp://localhost:8090/server1

@@ -46,7 +46,11 @@ namespace puppetMaster {
                         createServer(cmds[1],cmds[2],cmds[3],cmds[4],cmds[5]);
                         break;
                     case "Client":
-                        createClient(cmds[1],cmds[2],cmds[3],cmds[4]);
+                        if (cmds.Length==5){
+                            createClient(cmds[1],cmds[2],cmds[3],cmds[4]);
+                        }else{//no script file
+                            createClient(cmds[1],cmds[2],cmds[3],"");
+                        }
                         break;
                     case "AddRoom":
                         addRoom(cmds[1],cmds[2],cmds[3]);
@@ -79,7 +83,7 @@ namespace puppetMaster {
 
         }
 
-        public ServerInfo createServer(string server_id, string server_url, string max_faults,
+        public void createServer(string server_id, string server_url, string max_faults,
                                 string min_delay, string max_delay){
             
             //tcp://localhost:3000/server1 needs to be parsed
@@ -97,17 +101,16 @@ namespace puppetMaster {
                 //TODO catch diferent types of execeptions
                 Console.WriteLine("pcs connection failed");
                 Console.WriteLine(ex.Message);
-                return null;
+                return;
             }
 
             //save server
             serverList.Add(server_id, serverInfo);
-
-            return serverInfo;
+            window.addServer(serverInfo);
             
         }
 
-        public ClientInfo createClient(string username, string client_url, string server_url,
+        public void createClient(string username, string client_url, string server_url,
                                 string script_file ){
 
             //connect to correct pcs
@@ -124,13 +127,12 @@ namespace puppetMaster {
                 //TODO catch diferent types of execeptions
                 Console.WriteLine("pcs connection failed");
                 Console.WriteLine(ex.Message);
-                return null;
+                return;
             }
 
             //save client
             clientList.Add(username, clientInfo);
-
-            return clientInfo;
+            window.addClient(clientInfo);
         }
 
         public void addRoom(string location, string capacity, string room_name){
@@ -150,11 +152,19 @@ namespace puppetMaster {
 
             //crash server
             ServerInfo serverInfo = serverList[server_id];
-            ServerPuppeteer server = (ServerPuppeteer) Activator.GetObject(
-                    typeof(ServerPuppeteer),
-                    serverInfo.url);
-            server.kill();
+            IServerPuppeteer server = (IServerPuppeteer) Activator.GetObject(
+                    typeof(IServerPuppeteer),
+                    serverInfo.url+"Puppeteer");
+            try{
+                //TODO works, but needs to be assyncronous, dont wait for response
+                server.kill();
+            }catch(Exception ex){
+                Console.WriteLine("server connection failed");
+                Console.WriteLine(ex.Message);
+                return;
+            }
 
+            window.removeServer(serverInfo);
             serverList.Remove(server_id);
         }
 

@@ -115,7 +115,7 @@ namespace puppetMaster{
             Console.WriteLine("Loading: " + waitTimeBox.Name);
 
             
-            puppetMaster = PuppetMaster.getPuppetMaster();
+            puppetMaster = PuppetMaster.getPuppetMaster(this);
 
             //create TCP channel on port 8075
             string port = "8075";
@@ -155,11 +155,8 @@ namespace puppetMaster{
             string min_delay = createServer_min_delay.Text;
             string max_delay =  createServer_max_delay.Text;
 
-            ServerInfo server = puppetMaster.createServer(server_id, url, max_faults, min_delay, max_delay);
+           puppetMaster.createServer(server_id, url, max_faults, min_delay, max_delay);
 
-            TextBlock block = new TextBlock();
-            block.Text = server.server_id;
-            serverPanel.Children.Add(block);
         }
 
         public void createClient(object sender, RoutedEventArgs e){
@@ -169,12 +166,7 @@ namespace puppetMaster{
             string server_url = createClient_server_url.Text;
             string script_file = createClient_script_file.Text;
 
-            ClientInfo client = puppetMaster.createClient(username, url, server_url, script_file);
-
-            TextBlock block = new TextBlock();
-            block.Name = client.username;
-            block.Text = client.username;
-            clientPanel.Children.Add(block);
+            puppetMaster.createClient(username, url, server_url, script_file);
         }
 
         public void addRoom(object sender, RoutedEventArgs e){
@@ -196,7 +188,6 @@ namespace puppetMaster{
             string server_id = crashServerID.Text;
             puppetMaster.crashServer(server_id);
 
-            //TODO remove server from UI
         }
 
         public void freezeServer(object sender, RoutedEventArgs e){
@@ -215,6 +206,26 @@ namespace puppetMaster{
 
             string time = waitTimeBox.Text;
             puppetMaster.wait(time);
+        }
+
+        //update ui
+        public void addClient(ClientInfo client){
+            TextBlock block = new TextBlock();
+            block.Name = client.username;
+            block.Text = client.username;
+            clientPanel.Children.Add(block);
+        }
+
+        public void addServer(ServerInfo server){
+            TextBlock block = new TextBlock();
+            block.Text = server.server_id;
+            block.Name = server.server_id;
+            serverPanel.Children.Add(block);
+        }
+
+        public void removeServer(ServerInfo server){
+            TextBlock block = this.Find<TextBlock>(server.server_id);
+            serverPanel.Children.Remove(block);
         }
         
     }
