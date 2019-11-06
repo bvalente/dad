@@ -4,21 +4,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="900"
         x:Class="puppetMaster.MainWindow"
-        Title="puppetMaster" Width="900" Height="600">
+        Title="puppetMaster" Width="1000" Height="600">
 
     <!--window panel-->
     <StackPanel Name="WindowPanel" Orientation="Horizontal" 
             HorizontalAlignment="Center"
-            Width="900">  
+            Width="1000">  
 
-        <StackPanel Name="StatusPanel" Orientation="Vertical"
+        <StackPanel Name="StatusPanelList" Orientation="Vertical"
             HorizontalAlignment="Center"
-            Width="300">
+            Width="200">
 
             <!--Client PANEL-->
             <Border BorderBrush="Black" BorderThickness="2">
-                <StackPanel Name="ClientPanel" Height="300">
-                    <TextBlock Text="Clients" />
+                <StackPanel Name="ClientPanelList" Height="300">
+                    <TextBlock Text="Clients" HorizontalAlignment="Center"/>
 
                     <!--Code will show online clients here-->
 
@@ -28,8 +28,8 @@
 
             <!--Server PANEL-->
             <Border BorderBrush="Black" BorderThickness="2">
-                <StackPanel  Name="ServerPanel" Height="300">
-                    <TextBlock Text="Servers" />
+                <StackPanel  Name="ServerPanelList" Height="300">
+                    <TextBlock Text="Servers" HorizontalAlignment="Center"/>
 
                     <!--Code will show online clients here-->
 
@@ -40,7 +40,7 @@
 
         <StackPanel Name="CommandsPanel" Orientation="Vertical"
             HorizontalAlignment="Center"
-            Width="600">
+            Width="800">
 
             <StackPanel Name="ScriptPanel" Orientation="Horizontal" >
 
@@ -48,8 +48,78 @@
                 <TextBox Name="PuppetMasterScript" Width="150"/>
                 <Button Name="PuppetMasterScriptButton" Content="execute" 
                         Click="executeScript"/>
-                <!--add command to execute in button-->
+            </StackPanel>
+            
+            <StackPanel Name="CreateServerPanel" Orientation="Horizontal" >
+                <TextBlock Text="serverID:"/>
+                <TextBox Name="createServerID" Width="50"/>
+                <TextBlock Text="url:"/>
+                <TextBox Name="createServer_url" Width="50"/>
+                <TextBlock Text="max_faults:"/>
+                <TextBox Name="createServer_max_faults" Width="50"/>
+                <TextBlock Text="min_delay:"/>
+                <TextBox Name="createServer_min_delay" Width="50"/>
+                <TextBlock Text="max_delay:"/>
+                <TextBox Name="createServer_max_delay" Width="50"/>
+                <Button Name="CreateServerButton" Content="Create Server"
+                        Click="createServer"/> 
+            </StackPanel>
 
+            <StackPanel Name="CreateClientPanel" Orientation="Horizontal" >
+                <TextBlock Text="username:"/>
+                <TextBox Name="createClient_username" Width="50"/>
+                <TextBlock Text="client_url:"/>
+                <TextBox Name="createClient_client_url" Width="50"/>
+                <TextBlock Text="server_url:"/>
+                <TextBox Name="createClient_server_url" Width="50"/>
+                <TextBlock Text="script_file:"/>
+                <TextBox Name="createClient_script_file" Width="50"/>
+                <Button Name="CreateClientButton" Content="Create Client"
+                        Click="createClient"/> 
+            </StackPanel>
+
+            <StackPanel Name="AddRoomPanel" Orientation="Horizontal" >
+                <TextBlock Text="location:"/>
+                <TextBox Name="room_location" Width="50"/>
+                <TextBlock Text="capacity:"/>
+                <TextBox Name="room_capacity" Width="50"/>
+                <TextBlock Text="room name:"/>
+                <TextBox Name="room_name" Width="50"/>
+                <Button Name="AddRoomButton" Content="Add Room"
+                    Click="addRoom"/> 
+            </StackPanel>
+
+            <StackPanel Name="StatusPanel" Orientation="Horizontal">
+                <Button Name="StatusButton" Content="Status"
+                    Click="status"/>
+            </StackPanel>
+
+            <StackPanel Name="CrashPanel" Orientation="Horizontal" >
+
+                <TextBlock Text="Server id:" />
+                <TextBox Name="CrashServerID" Width="100" />
+                <Button Name="CrashButton" Content="Crash"
+                        Click="crash"/>
+            </StackPanel>
+            
+            <StackPanel Name="FreezePanel" Orientation="Horizontal" >
+                <TextBlock Text="Server id:" />
+                <TextBox Name="FreezeServerID" Width="100" />
+                <Button Name="FreezeButton" Content="Freeze Server"
+                        Click="freezeServer" />
+            </StackPanel>
+
+            <StackPanel Name="UnfreezePanel" Orientation="Horizontal" >
+                <TextBlock Text="Server id:" />
+                <TextBox Name="UnfreezeServerID" Width="100" />
+                <Button Name="UnfreezeButton" Content="Unfreeze Server"
+                        Click="unfreezeServer" />
+            </StackPanel>
+
+            <StackPanel Name="WaitPanel" Orientation="Horizontal">
+                <TextBox Name="WaitTime" Width="100"/>
+                <Button Name="WaitTimeButton" Content="Wait Time"
+                        Click="waitTime"/>
             </StackPanel>
 
         </StackPanel>
