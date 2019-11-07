@@ -30,6 +30,9 @@ namespace server{
         //meetings database
         List<MeetingProposal> meetingList;
 
+        //room list
+        List<Room> roomList;
+
         //constructor
         public Server(string server_id, string url, int max_faults, int min_delay, int max_delay){
 
@@ -42,6 +45,7 @@ namespace server{
             clientList = new Dictionary<string, ClientInfo>();
 			meetingList = new List<MeetingProposal>();
             actionList = new List<Action>();
+            roomList = new List<Room>();
             //TODO load client/meetings database
         }
 
@@ -97,6 +101,12 @@ namespace server{
             //send client info to other servers?
         }
 
+        public void addRoom(Room room){
+            roomList.Add(room);
+            //Debug
+            Console.WriteLine("added " + room.room_name);
+        }
+
         public void executeActionList(){
 
             //foreach
@@ -124,6 +134,10 @@ namespace server{
         public string status(){
             return null;
             //TODO: voltar aqui 
+        }
+
+        public void addRoom(Room room){
+            server.addRoom(room);
         }
 
         public void kill(){

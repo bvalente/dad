@@ -53,10 +53,6 @@ namespace puppetMaster{
         
         //WaitPanel
         TextBox waitTimeBox;
-        
-        //unused
-        StackPanel pcsPanel;
-        TextBox pcsIp;
 
         //PuppetMaster variables
         PuppetMaster puppetMaster;

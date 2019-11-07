@@ -43,6 +43,9 @@ namespace lib{
         //return server status
         string status();
 
+        //add room
+        void addRoom(Room room);
+
         //freeze server
         void freeze();
 

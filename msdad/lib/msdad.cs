@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using System;
 
-namespace lib
-{
+namespace lib{
+
+    [Serializable]
     public class Slot{
         public string location;
         public string date;
@@ -14,6 +15,20 @@ namespace lib
 
     }
 
+    [Serializable]
+    public class Room{
+        public string location;
+        public int capacity;
+        public string room_name;
+
+        public Room(string location, int capacity, string room_name){
+            this.location = location;
+            this.capacity = capacity;
+            this.room_name = room_name;
+        }
+    }
+
+    [Serializable]
     public class MeetingProposal{
         public string coordinator;
         public string topic;
@@ -48,6 +63,7 @@ namespace lib
         }
     }
 
+    [Serializable]
     public class MeetingException : Exception{
         public MeetingException(){
         }

@@ -17,14 +17,17 @@ namespace puppetMaster {
         Dictionary<string,ClientInfo> clientList;
         Dictionary<string,ServerInfo> serverList;
 
-        //no constructor()? 
-        //TODO make singleton
+        //room list
+        List<Room> roomList;
+
         private PuppetMaster(MainWindow window){
             //save window
             this.window = window;
             //create dictionaries
             clientList = new Dictionary<string, ClientInfo>();
             serverList = new Dictionary<string, ServerInfo>();
+            //room list
+            roomList = new List<Room>();
         }
 
         public static PuppetMaster getPuppetMaster(MainWindow window){
@@ -103,7 +106,20 @@ namespace puppetMaster {
                 Console.WriteLine(ex.Message);
                 return;
             }
-
+            
+            //send all rooms available
+            IServerPuppeteer server = (IServerPuppeteer) Activator.GetObject(
+                typeof(IServerPuppeteer),
+                server_url+"Puppeteer");
+            try{
+                foreach(Room room in roomList){
+                    server.addRoom(room);
+                }
+            } catch(Exception ex){
+                Console.WriteLine("connection to server failed");
+                Console.WriteLine(ex.Message);
+            }
+            
             //save server
             serverList.Add(server_id, serverInfo);
             window.addServer(serverInfo);
@@ -137,7 +153,19 @@ namespace puppetMaster {
 
         public void addRoom(string location, string capacity, string room_name){
             
-            //create room, pass it to all servers?
+            //create room
+            Room room = new Room(location, Int32.Parse(capacity), room_name);
+            
+            //send room to all servers
+            foreach(KeyValuePair<string,ServerInfo> pair in serverList){
+                IServerPuppeteer server = (IServerPuppeteer) Activator.GetObject(
+                    typeof(IServerPuppeteer),
+                    pair.Value.url+"Puppeteer");
+                server.addRoom(room);
+            }
+
+            //add room to roomList
+            roomList.Add(room);
             
         }
 
@@ -173,7 +201,7 @@ namespace puppetMaster {
             ServerInfo serverInfo = serverList[server_id];
             IServerPuppeteer server = (IServerPuppeteer) Activator.GetObject(
                 typeof(IServerPuppeteer),
-                serverInfo.url);
+                serverInfo.url+"Puppeteer");
             server.freeze();
             
         }
@@ -183,7 +211,7 @@ namespace puppetMaster {
             ServerInfo serverInfo = serverList[server_id];
             IServerPuppeteer server = (IServerPuppeteer) Activator.GetObject(
                 typeof(IServerPuppeteer),
-                serverInfo.url);
+                serverInfo.url+"Puppeteer");
             server.unfreeze();
         }
 
