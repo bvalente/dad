@@ -27,21 +27,15 @@ namespace client{
 
             this.username = username;
             this.client_url = client_url;
+            this.server_url = server_url;
+            this.script_file = script_file;
 			meetingList = new List<MeetingProposal>();
-			//TODO import meetings data
-
-            //TODO IMPORTANT receive server ip and connect to that
-            /*
-            server = (IServer) Activator.GetObject(typeof(IServer), "tcp://localhost:8090/Server"); //TODO: fazer no caso em que ha varias maquinas
+			//TODO import meetings data?
             
-            try{
-                Console.WriteLine(server.ping());
-            } catch(Exception ex){
-                Console.WriteLine("Could not locate server");
-				Console.WriteLine(ex.Message);
-            }
-            */
-            
+            IServer server = (IServer) Activator.GetObject(
+                typeof(IServer), 
+                server_url);
+            server.addClient(this.GetInfo());
             executeScript(script_file);
 
         }
@@ -105,7 +99,9 @@ namespace client{
 
         //Lists all available meetings
         void list(){
-
+            foreach(MeetingProposal meeting in meetingList){
+                Console.WriteLine(meeting);
+            }
         }
         
         //Creates a new meeting
@@ -134,13 +130,35 @@ namespace client{
                 meeting_topic, min_attendees, slotList, invitees);
             
             //what to do with the meeting?
-            //TODO a lot of exceptions
+
+            //guardar meeting
+
+
+            //get server
+            IServer server = (IServer) Activator.GetObject(
+                typeof(IServer), 
+                server_url); 
+            
+            //try to create meeting
+            try{
+                server.createMeeting(meeting);
+            } catch(Exception ex){
+
+                //TODO nossas excepcoes
+                Console.WriteLine("connection with server failed");
+				Console.WriteLine(ex.Message);
+                return;
+            }
+
+            //pedir mais meetings?
+            meetingList.Add(meeting);
+            
 
         }
 
         //Joins an existing meeting
         void join(string meeting_topic){
-
+            
         }
 
         //Closes a meeting
@@ -152,6 +170,10 @@ namespace client{
         void wait(string time){
             int time_int = Int32.Parse(time);
             Thread.Sleep(time_int);
+        }
+
+        ClientInfo GetInfo(){
+            return new ClientInfo(username, client_url, server_url, script_file);
         }
     }
 

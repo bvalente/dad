@@ -169,12 +169,22 @@ namespace puppetMaster {
         }
 
         public void freezeServer(string server_id){
+            //freeze server
+            ServerInfo serverInfo = serverList[server_id];
+            IServerPuppeteer server = (IServerPuppeteer) Activator.GetObject(
+                typeof(IServerPuppeteer),
+                serverInfo.url);
+            server.freeze();
             
         }
 
         public void unfreezeServer(string server_id){
-
             //unfreeze server
+            ServerInfo serverInfo = serverList[server_id];
+            IServerPuppeteer server = (IServerPuppeteer) Activator.GetObject(
+                typeof(IServerPuppeteer),
+                serverInfo.url);
+            server.unfreeze();
         }
 
         //wait some time to do the next command

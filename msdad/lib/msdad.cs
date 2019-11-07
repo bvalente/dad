@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System;
 
 namespace lib
 {
@@ -27,6 +28,36 @@ namespace lib
             this.minParticipants = minParticipants;
             this.slotList = slotList;
             this.invitees = invitees;
+        }
+
+        public override string ToString(){
+
+            string text = "";
+            text += "Coordinator: " + coordinator + "\n";
+            text += "Topic: " + topic + "\n";
+            text += "Minimum Participants: " + minParticipants.ToString() + "\n";
+            
+            foreach(Slot slot in slotList){
+                text += slot.location + ':' + slot.date + "\n";
+            }
+            foreach(string invitee in invitees){
+                text += invitee + "\n";
+            }
+
+            return text;
+        }
+    }
+
+    public class MeetingException : Exception{
+        public MeetingException(){
+        }
+
+        public MeetingException(string message)
+            : base(message){
+        }
+
+        public MeetingException(string message, Exception inner)
+            : base(message, inner){
         }
     }
 }

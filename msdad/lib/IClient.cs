@@ -52,4 +52,17 @@ namespace lib{
         //Delays the execution of the next command for x milliseconds
         void wait(int x);
     }
+
+    public class ClientException : Exception{
+        public ClientException(){
+        }
+
+        public ClientException(string message)
+            : base(message){
+        }
+
+        public ClientException(string message, Exception inner)
+            : base(message, inner){
+        }
+    }
 }

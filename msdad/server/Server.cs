@@ -18,8 +18,14 @@ namespace server{
         public int min_delay;
         public int max_delay;
 
+        //indicates if server is frozen, let it go 
+        public bool freeze = false;
+
+        //pending actions
+        List<Action> actionList;
+
         //client database
-        Dictionary<string, IClient> clientList;
+        Dictionary<string, ClientInfo> clientList;
 
         //meetings database
         List<MeetingProposal> meetingList;
@@ -33,8 +39,9 @@ namespace server{
             this.min_delay = min_delay;
             this.max_delay = max_delay;
 
-            clientList = new Dictionary<string, IClient>();
+            clientList = new Dictionary<string, ClientInfo>();
 			meetingList = new List<MeetingProposal>();
+            actionList = new List<Action>();
             //TODO load client/meetings database
         }
 
@@ -43,32 +50,41 @@ namespace server{
         }
 
         public void createMeeting(MeetingProposal meeting){
-            //coordinator is in the meeting class
-            //TODO verify if the meeting is valid
-
-            Dictionary<string, IClient> senders;
-
-            if(meeting.invitees == null){
-                senders = clientList;
-            } else {
-                senders = new Dictionary<string, IClient>();
-                foreach(string s in meeting.invitees){
-                    senders.Add(s, clientList[s]);
-                }
+            //REMINDER coordinator is in the meeting class
+            
+            //check if server is frozen
+            if(this.freeze == true){
+                Action action = new Action(() => this.createMeeting(meeting));
+                actionList.Add(action);
+                return;
             }
 
-            foreach(KeyValuePair<string, IClient> pair in clientList){//less coordinator
+            //TODO: verify if the meeting is valid!
+            //if : sala livre, hora pretendida, capacidade da sala 
+
+            //send to every client except the coordinator
+            foreach(KeyValuePair<string, ClientInfo> pair in clientList){
                 //send
                 if(pair.Key != meeting.coordinator){ //jumps cordinator and only sends to other clients
-                    pair.Value.sendMeeting(meeting);
+                    IClient client = (IClient) Activator.GetObject(
+                        typeof(IClient),
+                        pair.Value.client_url);
+                    client.sendMeeting(meeting);
                 }
             }
 
+            //add meeting to list
             meetingList.Add(meeting);
 
         }
 
         public void addClient(ClientInfo clientInfo){
+            //check if server is frozen
+            if(this.freeze == true){
+                Action action = new Action( () => this.addClient(clientInfo));
+                actionList.Add(action);
+                return;
+            }
             //check if there is a client with the same name
             if (clientList.ContainsKey(clientInfo.username)){
                 //TODO throw exception
@@ -76,12 +92,18 @@ namespace server{
             }
 
             //add client
-            IClient client = (IClient) Activator.GetObject(
-                        typeof(IClient),
-                        clientInfo.client_url);
-            clientList.Add(clientInfo.username,client);
+            clientList.Add(clientInfo.username,clientInfo);
 
             //send client info to other servers?
+        }
+
+        public void executeActionList(){
+
+            //foreach
+            foreach(Action action in actionList){
+                action();
+            }
+            actionList.Clear();
         }
     }
 
@@ -107,6 +129,15 @@ namespace server{
         public void kill(){
             Console.WriteLine("Bye bye");
             Environment.Exit(0);
+        }
+
+        public void freeze(){
+            server.freeze = true;
+        }
+
+        public void unfreeze(){
+            server.freeze = false;
+            server.executeActionList();
         }
 
     }
