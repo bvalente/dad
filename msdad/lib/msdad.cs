@@ -3,18 +3,12 @@ using System.Collections.Generic;
 namespace lib
 {
     public class Slot{
-        private string date;
-        private string location;
+        public string location;
+        public string date;
 
-        public Slot(string date, string location){
-            this.date = date;
+        public Slot(string location, string date){
             this.location = location;
-        }
-        public string getDate(){
-            return this.date;
-        }
-        public string getLocation(){
-            return this.location;
+            this.date = date;
         }
 
     }
@@ -24,13 +18,9 @@ namespace lib
         public string topic;
         public int minParticipants;
         public List<Slot> slotList;
-        public List<string> invitees; //can be null
+        public List<string> invitees; //can be empty
 
-        //test if this works, seems wrong
-        MeetingProposal(string coordinator, string topic, int minParticipants,
-                        List<Slot> slotList) : this(coordinator, topic, minParticipants, slotList, null)
-        {}
-        MeetingProposal(string coordinator, string topic, int minParticipants,
+        public MeetingProposal(string coordinator, string topic, int minParticipants,
                         List<Slot> slotList , List<string> invitees){
             this.coordinator = coordinator;
             this.topic = topic;

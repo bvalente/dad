@@ -52,8 +52,13 @@ namespace client{
             Console.WriteLine(client.username + " PID: " +
                 Process.GetCurrentProcess().Id.ToString());
 
-            //prevents process from closing
-            System.Console.ReadLine();
+            //read input and execute commands
+            string input = System.Console.ReadLine();
+            while (input != "exit"){
+                client.executeCommand(input);
+                System.Console.ReadLine();
+            }
+            
         }
     }
 
