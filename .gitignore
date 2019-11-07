@@ -9,6 +9,5 @@
 *.cache
 
 #IDE files
-*.sln
 *.suo
 *.user
