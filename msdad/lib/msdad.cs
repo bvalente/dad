@@ -35,6 +35,9 @@ namespace lib{
         public int minParticipants;
         public List<Slot> slotList;
         public List<string> invitees; //can be empty
+        public int numParticipants;
+        public bool open;
+        public Room room;
 
         public MeetingProposal(string coordinator, string topic, int minParticipants,
                         List<Slot> slotList , List<string> invitees){
@@ -43,6 +46,8 @@ namespace lib{
             this.minParticipants = minParticipants;
             this.slotList = slotList;
             this.invitees = invitees;
+            this.numParticipants = 0;
+            this.open = true;
         }
 
         public override string ToString(){

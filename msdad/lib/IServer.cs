@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace lib{
 
@@ -33,6 +34,11 @@ namespace lib{
         //add client
         void addClient(ClientInfo client);
 
+        //returns all meetings
+        List<MeetingProposal> getMeetings();
+
+        //join client
+        void joinClient(ClientInfo client, string meeting_topic);
     }
 
     public interface IServerPuppeteer{
@@ -40,8 +46,8 @@ namespace lib{
         // simple ping to check server status
         string ping();
 
-        //return server status
-        string status();
+        //print server status
+        void statusPuppeteer();
 
         //add room
         void addRoom(Room room);

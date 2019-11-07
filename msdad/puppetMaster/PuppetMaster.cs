@@ -170,28 +170,43 @@ namespace puppetMaster {
         }
 
         public void status(){
-
             //make all servers and clients print status
-            
-
+            //foreach servers
+            foreach(KeyValuePair<string, ServerInfo> pair in serverList){
+                IServerPuppeteer server = (IServerPuppeteer) Activator.GetObject(
+                    typeof(IServerPuppeteer),
+                    pair.Value.url+"Puppeteer");
+                try{
+                    server.statusPuppeteer();
+                } catch(Exception ex){
+                    Console.WriteLine(ex.Message);
+                }        
+            }
+            //foreach clients
+            foreach(KeyValuePair<string,ClientInfo> pair in clientList){
+                IClientPuppeteer client = (IClientPuppeteer) Activator.GetObject(
+                    typeof(IClientPuppeteer),
+                    pair.Value.client_url+"Puppeteer");
+                try{
+                    client.statusPuppeteer();    
+                }catch(Exception ex){
+                    Console.WriteLine(ex.Message);
+                }
+            }
         }
 
         public void crashServer(string server_id){
-
-            //crash server
+            //get server
             ServerInfo serverInfo = serverList[server_id];
             IServerPuppeteer server = (IServerPuppeteer) Activator.GetObject(
                     typeof(IServerPuppeteer),
                     serverInfo.url+"Puppeteer");
-            try{
-                //TODO works, but needs to be assyncronous, dont wait for response
-                server.kill();
-            }catch(Exception ex){
-                Console.WriteLine("server connection failed");
-                Console.WriteLine(ex.Message);
-                return;
-            }
 
+            //async crash
+            Action action = new Action(server.kill);
+            action.BeginInvoke(null, null);
+
+            //remove evidence of server
             window.removeServer(serverInfo);
             serverList.Remove(server_id);
         }

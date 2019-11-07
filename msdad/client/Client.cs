@@ -1,6 +1,7 @@
 using System;
 using lib;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels.Tcp;
 using System.Runtime.Remoting.Channels;
@@ -97,11 +98,28 @@ namespace client{
             }
         }
 
+        
         //Lists all available meetings
         void list(){
+            //print meetings
             foreach(MeetingProposal meeting in meetingList){
                 Console.WriteLine(meeting);
             }
+            //async ask for update
+            IServer server = (IServer) Activator.GetObject(
+                typeof(IServer),
+                server_url);
+            ListDelegate del = new ListDelegate(server.getMeetings); //TODO replace ping
+            del.BeginInvoke(listCallback,null);
+        }
+        //delegate
+        delegate List<MeetingProposal> ListDelegate();
+        //callback
+        void listCallback(IAsyncResult ar){
+            //will be called when delegate is over
+            ListDelegate del = (ListDelegate)((AsyncResult)ar).AsyncDelegate;
+            meetingList.Clear();
+            meetingList = del.EndInvoke(ar);
         }
         
         //Creates a new meeting
@@ -175,6 +193,15 @@ namespace client{
         ClientInfo GetInfo(){
             return new ClientInfo(username, client_url, server_url, script_file);
         }
+        
+        public void status(){
+            //print name
+            Console.WriteLine(username);
+            //meetinglist
+            foreach(MeetingProposal meeting in meetingList){
+                Console.WriteLine(meeting);
+            }
+        }
     }
 
     //interface for the Puppet Master
@@ -193,38 +220,15 @@ namespace client{
             return "Client "+client.username+" is online";
         }
 
-        //list all available meetings
-        public string list(){
-            //TODO ask server for a database refresh
-            return "";
-        }
-
-        //create meeting
-        public void create(string meeting_topic, int min_attendees, int number_of_slots, int number_of_invitees,
-         List<Slot> list_of_slots, List<string> list_of_invitees){
-             //TODO
-            //criar MeetingProposal
-            //enviar para o servidor
-            //MeetingProposal m = new MeetingProposal(this.name, meeting_topic, min_attendees, list_of_slots, list_of_invitees);
-            
-            //server.createMeeting(m);
-            return;
-        }
-
-        //Joins an existing meeting
-        public void join(MeetingProposal meeting){
-            return;
-        }
-
-        //closes a meeting
-        public void close(MeetingProposal meeting){
-            return;
-        }
-
         //wait x miliseconds
         public void wait(int x){
             Thread.Sleep(x);
             return;
         }
+
+        public void statusPuppeteer(){
+            client.status();
+        }
+
     }
 }

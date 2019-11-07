@@ -107,8 +107,56 @@ namespace server{
             Console.WriteLine("added " + room.room_name);
         }
 
-        public void executeActionList(){
+        public List<MeetingProposal> getMeetings(){
+            return this.meetingList;
+        }
 
+        public void status(){
+            //each server prints it's own server_id
+            Console.WriteLine(server_id);
+            
+            //print freeze status
+            if(freeze == true){
+                Console.WriteLine("Server is frozen"); //let it go
+            } else {
+                Console.WriteLine("Server is not frozen");
+            }
+
+            //print clients
+            foreach(KeyValuePair<string, ClientInfo> pair in clientList){
+                Console.WriteLine(pair.Key);
+            }
+            //print rooms
+            foreach(Room room in roomList){
+                Console.WriteLine(room.location + ":" + room.room_name);
+            }
+            //print meetings
+            foreach(MeetingProposal meeting in meetingList){
+                Console.WriteLine(meeting);
+            }
+        }
+
+        public void joinClient(ClientInfo client, string meeting_topic){
+            //procurar meeting list, ver se existe
+            MeetingProposal meetingProposal = null;
+            foreach(MeetingProposal meeting in meetingList){
+                if(meeting.topic == meeting_topic){
+                    //encontramos
+                    meetingProposal = meeting;
+                    break;
+                }
+            }
+            
+            //ver se esta aberta
+            if(meetingProposal.open == false){
+                throw new MeetingException("Meeting is closed");
+            }
+
+            //ver se tem espaco
+            //TODO adicionar sala
+        }
+
+        public void executeActionList(){
             //foreach
             foreach(Action action in actionList){
                 action();
@@ -131,9 +179,8 @@ namespace server{
             return "Server Puppeteer is online";
         }
         
-        public string status(){
-            return null;
-            //TODO: voltar aqui 
+        public void statusPuppeteer(){
+            server.status();
         }
 
         public void addRoom(Room room){
