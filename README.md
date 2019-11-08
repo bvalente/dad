@@ -16,8 +16,14 @@ This project consists on 5 programs
 | ------- | ----: |
 | PCS | 10000 |
 | PuppetMaster | 10001 |
-| Servers | 8090-8099 |
-| Client | 8080-8089 |
+| Servers | user defined |
+| Client | user defined |
+
+## Install Avalonia
+
+Our project uses the Avalonia UI Framework because it is suported in Windows, MacOS and Linux.
+
+To Install Avalonia either download the Visual Studio extension [here](https://marketplace.visualstudio.com/items?itemName=AvaloniaTeam.AvaloniaforVisualStudio) or follow the instructions [here](https://github.com/AvaloniaUI/avalonia-dotnet-templates#installing-the-templates) to install it through the _dotnet_ tool.
 
 ## Compile and Run
 
