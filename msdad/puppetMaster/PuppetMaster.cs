@@ -18,8 +18,9 @@ namespace puppetMaster {
         Dictionary<string,ServerInfo> serverList;
 
         //room list
-        List<Room> roomList;
+        Dictionary<string, Location> locationList;
 
+        //singleton private constructor
         private PuppetMaster(MainWindow window){
             //save window
             this.window = window;
@@ -27,9 +28,10 @@ namespace puppetMaster {
             clientList = new Dictionary<string, ClientInfo>();
             serverList = new Dictionary<string, ServerInfo>();
             //room list
-            roomList = new List<Room>();
+            locationList = new Dictionary<string, Location>();
         }
 
+        //singleton getter
         public static PuppetMaster getPuppetMaster(MainWindow window){
             if(puppetMaster == null){
                 puppetMaster = new PuppetMaster(window);
@@ -112,9 +114,7 @@ namespace puppetMaster {
                 typeof(IServerPuppeteer),
                 server_url+"Puppeteer");
             try{
-                foreach(Room room in roomList){
-                    server.addRoom(room);
-                }
+                server.populate(locationList);
             } catch(Exception ex){
                 Console.WriteLine("connection to server failed");
                 Console.WriteLine(ex.Message);
@@ -151,21 +151,25 @@ namespace puppetMaster {
             window.addClient(clientInfo);
         }
 
-        public void addRoom(string location, string capacity, string room_name){
+        public void addRoom(string location_name, string capacity, string room_name){
+            
+            //look for location
+            Location location = locationList[location_name];
+            if (location == null){
+                location = new Location(location_name);
+                locationList.Add(location_name, location);
+            }
             
             //create room
-            Room room = new Room(location, Int32.Parse(capacity), room_name);
+            location.addRoom(room_name, Int32.Parse(capacity));
             
             //send room to all servers
             foreach(KeyValuePair<string,ServerInfo> pair in serverList){
                 IServerPuppeteer server = (IServerPuppeteer) Activator.GetObject(
                     typeof(IServerPuppeteer),
                     pair.Value.url+"Puppeteer");
-                server.addRoom(room);
+                server.addRoom(location_name, Int32.Parse(capacity), room_name);
             }
-
-            //add room to roomList
-            roomList.Add(room);
             
         }
 

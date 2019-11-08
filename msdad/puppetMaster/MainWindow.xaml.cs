@@ -113,8 +113,8 @@ namespace puppetMaster{
             
             puppetMaster = PuppetMaster.getPuppetMaster(this);
 
-            //create TCP channel on port 8075
-            string port = "8075";
+            //create TCP channel on port 10001
+            string port = "10001";
             TcpChannel channel = new TcpChannel(Int32.Parse(port));
             ChannelServices.RegisterChannel(channel, false);
 

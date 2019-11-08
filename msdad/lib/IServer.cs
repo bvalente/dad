@@ -38,7 +38,10 @@ namespace lib{
         List<MeetingProposal> getMeetings();
 
         //join client
-        void joinClient(ClientInfo client, string meeting_topic);
+        void joinClient(ClientInfo client, string meeting_topic, List<Slot> slotList);
+
+        //closes meeting
+        void closeMeeting(string meeting_topic, ClientInfo clientInfo);
     }
 
     public interface IServerPuppeteer{
@@ -50,7 +53,10 @@ namespace lib{
         void statusPuppeteer();
 
         //add room
-        void addRoom(Room room);
+        void addRoom(string location_name, int capacity, string room_name);
+
+        //populate with locations
+        void populate(Dictionary<string,Location> locationList);
 
         //freeze server
         void freeze();

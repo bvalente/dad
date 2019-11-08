@@ -31,7 +31,7 @@ namespace server{
         List<MeetingProposal> meetingList;
 
         //room list
-        List<Room> roomList;
+        public Dictionary<string,Location> locationList;
 
         //constructor
         public Server(string server_id, string url, int max_faults, int min_delay, int max_delay){
@@ -45,7 +45,7 @@ namespace server{
             clientList = new Dictionary<string, ClientInfo>();
 			meetingList = new List<MeetingProposal>();
             actionList = new List<Action>();
-            roomList = new List<Room>();
+            locationList = new Dictionary<string, Location>();
             //TODO load client/meetings database
         }
 
@@ -63,16 +63,29 @@ namespace server{
                 return;
             }
 
-            //TODO: verify if the meeting is valid!
-            //if : sala livre, hora pretendida, capacidade da sala 
+            //see if locations are valid
+            foreach(Slot slot in meeting.slotList){
+                if (locationList[slot.location] == null){
+                    throw new MeetingException("location " + slot.location + " does not exist");
+                }
+            }
+
+            //if clientList is empty, send to all clients
+            List<ClientInfo> senders = new List<ClientInfo>();
+            if(meeting.invitees == null){
+                senders = new List<ClientInfo>( clientList.Values);
+            } else{
+                foreach(String invitee in meeting.invitees){
+                    senders.Add(clientList[invitee]);
+                }
+            }
 
             //send to every client except the coordinator
-            foreach(KeyValuePair<string, ClientInfo> pair in clientList){
-                //send
-                if(pair.Key != meeting.coordinator){ //jumps cordinator and only sends to other clients
+            foreach(ClientInfo clientInfo in senders){
+                if(clientInfo.username != meeting.coordinator){ //jumps cordinator and only sends to other clients
                     IClient client = (IClient) Activator.GetObject(
                         typeof(IClient),
-                        pair.Value.client_url);
+                        clientInfo.client_url);
                     client.sendMeeting(meeting);
                 }
             }
@@ -89,20 +102,28 @@ namespace server{
                 actionList.Add(action);
                 return;
             }
+
             //check if there is a client with the same name
             if (clientList.ContainsKey(clientInfo.username)){
-                //TODO throw exception
-                return;
+                throw new ClientException("user " + clientInfo.username + " already exitsts");
             }
 
             //add client
             clientList.Add(clientInfo.username,clientInfo);
 
-            //send client info to other servers?
+            //TODO send client info to other servers
         }
 
-        public void addRoom(Room room){
-            roomList.Add(room);
+        public void addRoom(string location_name, int capacity, string room_name){
+            //look for location
+            Location location = locationList[location_name];
+            if (location == null){
+                location = new Location(location_name);
+                locationList.Add(location_name, location);
+            }
+            
+            //create room
+            Room room = location.addRoom(room_name, capacity);
             //Debug
             Console.WriteLine("added " + room.room_name);
         }
@@ -127,8 +148,14 @@ namespace server{
                 Console.WriteLine(pair.Key);
             }
             //print rooms
-            foreach(Room room in roomList){
-                Console.WriteLine(room.location + ":" + room.room_name);
+            foreach(KeyValuePair<string,Location> pair in locationList){
+                Console.WriteLine(pair.Key);
+                foreach(Room room in pair.Value.roomList){
+                    Console.WriteLine("\t" + room.room_name);
+                    foreach(string date in room.usedDates){
+                        Console.WriteLine("\t\t" + date);
+                    }
+                }
             }
             //print meetings
             foreach(MeetingProposal meeting in meetingList){
@@ -136,7 +163,7 @@ namespace server{
             }
         }
 
-        public void joinClient(ClientInfo client, string meeting_topic){
+        public void joinClient(ClientInfo client, string meeting_topic, List<Slot> slotList){
             //procurar meeting list, ver se existe
             MeetingProposal meetingProposal = null;
             foreach(MeetingProposal meeting in meetingList){
@@ -152,9 +179,15 @@ namespace server{
                 throw new MeetingException("Meeting is closed");
             }
 
-            //ver se tem espaco
-            //TODO adicionar sala
         }
+
+        public void closeMeeting(string meeting_topic, ClientInfo clientInfo){
+
+            //look for meeting, check if it is fine
+            //check if client is the coordinator
+            //check if there is available room at x date
+        }
+
 
         public void executeActionList(){
             //foreach
@@ -183,8 +216,12 @@ namespace server{
             server.status();
         }
 
-        public void addRoom(Room room){
-            server.addRoom(room);
+        public void populate(Dictionary<string, Location> locationList){
+            server.locationList = locationList;
+        }
+
+        public void addRoom(string location_name, int capacity, string room_name){
+            server.addRoom(location_name, capacity, room_name);
         }
 
         public void kill(){

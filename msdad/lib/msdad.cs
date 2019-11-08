@@ -2,6 +2,22 @@ using System.Collections.Generic;
 using System;
 
 namespace lib{
+    
+    [Serializable]
+    public class Location{
+        public string location_name;
+        public List<Room> roomList;
+
+        public Location(string location_name){
+            this.location_name = location_name;
+        }
+
+        public Room addRoom(string room_name, int capacity){
+            Room room = new Room(this, capacity, room_name);
+            roomList.Add(room);
+            return room;
+        }
+    }
 
     [Serializable]
     public class Slot{
@@ -12,16 +28,16 @@ namespace lib{
             this.location = location;
             this.date = date;
         }
-
     }
 
     [Serializable]
     public class Room{
-        public string location;
+        public Location location;
         public int capacity;
         public string room_name;
+        public List<string> usedDates;
 
-        public Room(string location, int capacity, string room_name){
+        public Room(Location location, int capacity, string room_name){
             this.location = location;
             this.capacity = capacity;
             this.room_name = room_name;
@@ -38,6 +54,7 @@ namespace lib{
         public int numParticipants;
         public bool open;
         public Room room;
+        public string date;
 
         public MeetingProposal(string coordinator, string topic, int minParticipants,
                         List<Slot> slotList , List<string> invitees){
@@ -65,6 +82,12 @@ namespace lib{
             }
 
             return text;
+        }
+
+        public void close(Room room, string date){
+            this.open = false;
+            this.room = room;
+            this.date = date;
         }
     }
 

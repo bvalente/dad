@@ -80,7 +80,7 @@ namespace client{
                         create(cmds);
                         break;
                     case "join":
-                        join(cmds[1]);
+                        join(cmds);
                         break;
                     case "close":
                         close(cmds[1]);
@@ -175,8 +175,23 @@ namespace client{
         }
 
         //Joins an existing meeting
-        void join(string meeting_topic){
-            
+        void join(string[] args){
+            string meeting_topic = args[1];
+            int number_of_slots = Int32.Parse(args[2]);
+            List<Slot> slotList = new List<Slot>();
+            for(int i = 3; i < number_of_slots + 3;i++){
+                string[] str = args[i].Split(',');
+                Slot slot = new Slot(str[0],str[1]);
+                slotList.Add(slot);
+            }
+
+            IServer server = (IServer) Activator.GetObject(
+                typeof(IServer),
+                server_url);
+            //TODO try catch
+            server.joinClient(this.GetInfo(), meeting_topic, slotList);
+
+
         }
 
         //Closes a meeting
