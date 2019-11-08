@@ -1,5 +1,6 @@
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace lib{
     
@@ -10,6 +11,7 @@ namespace lib{
 
         public Location(string location_name){
             this.location_name = location_name;
+            roomList = new List<Room>();
         }
 
         public Room addRoom(string room_name, int capacity){
@@ -45,13 +47,24 @@ namespace lib{
     }
 
     [Serializable]
+    public class Participant{
+        public ClientInfo client;
+        public List<Slot> slotList;
+
+        public Participant(ClientInfo client, List<Slot> slotList){
+            this.client = client;
+            this.slotList = slotList;
+        }
+    }
+
+    [Serializable]
     public class MeetingProposal{
         public string coordinator;
         public string topic;
         public int minParticipants;
         public List<Slot> slotList;
         public List<string> invitees; //can be empty
-        public int numParticipants;
+        public List<Participant> participants;
         public bool open;
         public Room room;
         public string date;
@@ -63,7 +76,7 @@ namespace lib{
             this.minParticipants = minParticipants;
             this.slotList = slotList;
             this.invitees = invitees;
-            this.numParticipants = 0;
+            this.participants = new List<Participant>();
             this.open = true;
         }
 
@@ -102,6 +115,11 @@ namespace lib{
 
         public MeetingException(string message, Exception inner)
             : base(message, inner){
+        }
+
+        public MeetingException(SerializationInfo info, StreamingContext context)
+            : base(info, context){
+
         }
     }
 }

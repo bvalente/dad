@@ -31,19 +31,22 @@ namespace server{
             int min_delay_int = Int32.Parse(min_delay);
             int max_delay_int = Int32.Parse(max_delay);
             
-            //create server
+            //create server and puppeteer
             Server server = new Server(server_id, url, max_faults_int, min_delay_int, max_delay_int);
+            ServerPuppeteer puppeteer = new ServerPuppeteer(server);
+
+            //marshall objects
+            RemotingServices.Marshal(
+                puppeteer,
+                service + "Puppeteer",
+                typeof(ServerPuppeteer));
+
             RemotingServices.Marshal(
                 server,
                 service,
                 typeof(Server));
 
-            //create server puppeteer
-            ServerPuppeteer puppeteer = new ServerPuppeteer(server);
-            RemotingServices.Marshal(
-                puppeteer,
-                service + "Puppeteer",
-                typeof(ServerPuppeteer));
+            
             
             //DEBUG
             Console.WriteLine("New server created");

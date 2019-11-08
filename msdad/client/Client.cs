@@ -21,7 +21,7 @@ namespace client{
         public string script_file;
                 
         //meetings database
-        List<MeetingProposal> meetingList;
+        Dictionary<string,MeetingProposal> meetingList;
         
         //constructor
         public Client(string username, string client_url, string server_url, string script_file){
@@ -30,7 +30,7 @@ namespace client{
             this.client_url = client_url;
             this.server_url = server_url;
             this.script_file = script_file;
-			meetingList = new List<MeetingProposal>();
+			meetingList = new Dictionary<string, MeetingProposal>();
 			//TODO import meetings data?
             
             IServer server = (IServer) Activator.GetObject(
@@ -48,7 +48,7 @@ namespace client{
 
         //receive meeting from server and save it
         public void sendMeeting(MeetingProposal meeting){
-            meetingList.Add(meeting);
+            meetingList.Add(meeting.topic,meeting);
         }
 
         void executeScript(string fileName){
@@ -102,8 +102,8 @@ namespace client{
         //Lists all available meetings
         void list(){
             //print meetings
-            foreach(MeetingProposal meeting in meetingList){
-                Console.WriteLine(meeting);
+            foreach(KeyValuePair<string, MeetingProposal> key in meetingList){
+                Console.WriteLine(key.Value);
             }
             //async ask for update
             IServer server = (IServer) Activator.GetObject(
@@ -113,13 +113,14 @@ namespace client{
             del.BeginInvoke(listCallback,null);
         }
         //delegate
-        delegate List<MeetingProposal> ListDelegate();
+        delegate Dictionary<string,MeetingProposal> ListDelegate();
         //callback
         void listCallback(IAsyncResult ar){
             //will be called when delegate is over
             ListDelegate del = (ListDelegate)((AsyncResult)ar).AsyncDelegate;
             meetingList.Clear();
             meetingList = del.EndInvoke(ar);
+            //TODO
         }
         
         //Creates a new meeting
@@ -169,7 +170,7 @@ namespace client{
             }
 
             //pedir mais meetings?
-            meetingList.Add(meeting);
+            meetingList.Add(meeting.topic, meeting);
             
 
         }
@@ -189,8 +190,11 @@ namespace client{
                 typeof(IServer),
                 server_url);
             //TODO try catch
-            server.joinClient(this.GetInfo(), meeting_topic, slotList);
-
+            try{
+                server.joinClient(this.GetInfo(), meeting_topic, slotList);
+            }catch(MeetingException ex){
+                Console.WriteLine(ex.Message);
+            }            
 
         }
 
@@ -213,8 +217,8 @@ namespace client{
             //print name
             Console.WriteLine(username);
             //meetinglist
-            foreach(MeetingProposal meeting in meetingList){
-                Console.WriteLine(meeting);
+            foreach(KeyValuePair<string, MeetingProposal> key in meetingList){
+                Console.WriteLine(key.Value);
             }
         }
     }

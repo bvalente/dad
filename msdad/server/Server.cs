@@ -28,7 +28,7 @@ namespace server{
         Dictionary<string, ClientInfo> clientList;
 
         //meetings database
-        List<MeetingProposal> meetingList;
+        Dictionary<string,MeetingProposal> meetingList;
 
         //room list
         public Dictionary<string,Location> locationList;
@@ -43,7 +43,7 @@ namespace server{
             this.max_delay = max_delay;
 
             clientList = new Dictionary<string, ClientInfo>();
-			meetingList = new List<MeetingProposal>();
+			meetingList = new Dictionary<string,MeetingProposal>();
             actionList = new List<Action>();
             locationList = new Dictionary<string, Location>();
             //TODO load client/meetings database
@@ -65,14 +65,14 @@ namespace server{
 
             //see if locations are valid
             foreach(Slot slot in meeting.slotList){
-                if (locationList[slot.location] == null){
+                if (! locationList.ContainsKey(slot.location)){
                     throw new MeetingException("location " + slot.location + " does not exist");
                 }
             }
 
             //if clientList is empty, send to all clients
             List<ClientInfo> senders = new List<ClientInfo>();
-            if(meeting.invitees == null){
+            if(meeting.invitees.Count == 0){
                 senders = new List<ClientInfo>( clientList.Values);
             } else{
                 foreach(String invitee in meeting.invitees){
@@ -91,7 +91,7 @@ namespace server{
             }
 
             //add meeting to list
-            meetingList.Add(meeting);
+            meetingList.Add(meeting.topic,meeting);
 
         }
 
@@ -116,19 +116,25 @@ namespace server{
 
         public void addRoom(string location_name, int capacity, string room_name){
             //look for location
-            Location location = locationList[location_name];
-            if (location == null){
+            Location location;
+            if(locationList.ContainsKey(location_name)){
+                location = locationList[location_name];
+            }    
+            else {
                 location = new Location(location_name);
                 locationList.Add(location_name, location);
+                //Debug
+                Console.WriteLine("Location added " + location_name);
             }
             
             //create room
             Room room = location.addRoom(room_name, capacity);
             //Debug
-            Console.WriteLine("added " + room.room_name);
+            Console.WriteLine("Room added " + room.room_name);
+            
         }
 
-        public List<MeetingProposal> getMeetings(){
+        public Dictionary<string,MeetingProposal> getMeetings(){
             return this.meetingList;
         }
 
@@ -157,37 +163,57 @@ namespace server{
                     }
                 }
             }
-            //print meetings
-            foreach(MeetingProposal meeting in meetingList){
-                Console.WriteLine(meeting);
+            foreach(KeyValuePair<string, MeetingProposal> key in meetingList){
+                Console.WriteLine(key.Value);
             }
         }
 
         public void joinClient(ClientInfo client, string meeting_topic, List<Slot> slotList){
+            //slotList e a lista de disponibilidade do cliente
+            
             //procurar meeting list, ver se existe
-            MeetingProposal meetingProposal = null;
-            foreach(MeetingProposal meeting in meetingList){
-                if(meeting.topic == meeting_topic){
-                    //encontramos
-                    meetingProposal = meeting;
-                    break;
-                }
+            if( ! meetingList.ContainsKey(meeting_topic)){
+                throw new MeetingException("meeting does not exist");
             }
+            MeetingProposal meeting = meetingList[meeting_topic];
+
             
             //ver se esta aberta
-            if(meetingProposal.open == false){
+            if(meeting.open == false){
                 throw new MeetingException("Meeting is closed");
             }
-
+            
+            //see if the client is invited
+            if(meeting.invitees.Count == 0 ||
+                meeting.invitees.Contains(client.username)){
+                //any client can join
+                meeting.participants.Add(new Participant(client, slotList));
+            } else {
+                
+                throw new MeetingException("client " + client.username + 
+                        " can not participate in " + meeting_topic);
+                
+            }
         }
 
+        //book a meeting
         public void closeMeeting(string meeting_topic, ClientInfo clientInfo){
-
             //look for meeting, check if it is fine
+            MeetingProposal meeting = meetingList[meeting_topic];
+            if(meeting.open == false){
+               throw new MeetingException("Meeting is already closed");
+            }
             //check if client is the coordinator
+            if(clientInfo.username != meetingList[meeting_topic].coordinator){
+                throw new MeetingException("This client can't close the meeting");
+            }
             //check if there is available room at x date
+            if(meeting.room.usedDates.Contains(meeting.date)){
+                throw new MeetingException("This room is already booked");
+            }
+            //if everythinh ok, books the meeting
+            meeting.close(meeting.room, meeting.date);
         }
-
 
         public void executeActionList(){
             //foreach

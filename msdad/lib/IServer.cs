@@ -35,7 +35,7 @@ namespace lib{
         void addClient(ClientInfo client);
 
         //returns all meetings
-        List<MeetingProposal> getMeetings();
+        Dictionary<string,MeetingProposal> getMeetings();
 
         //join client
         void joinClient(ClientInfo client, string meeting_topic, List<Slot> slotList);

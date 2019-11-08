@@ -114,6 +114,7 @@ namespace puppetMaster {
                 typeof(IServerPuppeteer),
                 server_url+"Puppeteer");
             try{
+                Thread.Sleep(2000); //TODO: ALTERAR
                 server.populate(locationList);
             } catch(Exception ex){
                 Console.WriteLine("connection to server failed");
@@ -154,8 +155,10 @@ namespace puppetMaster {
         public void addRoom(string location_name, string capacity, string room_name){
             
             //look for location
-            Location location = locationList[location_name];
-            if (location == null){
+            Location location;
+            if( locationList.ContainsKey(location_name)){
+                location = locationList[location_name];
+            } else{
                 location = new Location(location_name);
                 locationList.Add(location_name, location);
             }
