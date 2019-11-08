@@ -208,11 +208,43 @@ namespace server{
                 throw new MeetingException("This client can't close the meeting");
             }
             //check if there is available room at x date
+            //ainda nao tem room
+            //procurar uma room na location certa, ver se tem espaco
+            //for participant, 
+            List<Participant> participants = meeting.participants;
+            List<Participant> participant_recursive = new List<Participant>(participants);
+            participant_recursive.RemoveAt(0); //remove first element
+            List<Slot> possibleSlots = new List<Slot>();
+            foreach(Slot slot in participants[0].slotList){
+                Slot slot2 = findSlot(participant_recursive, slot);
+                if (slot2!= null){
+                    possibleSlots.Add(slot2);
+                }
+            }
+            //possible slot tem todas as slots possiveis
+
+            //depois de encontrar os slots em comum
+
+            //temos de encontrar uma sala com espaco
+            //TODO:
+
             if(meeting.room.usedDates.Contains(meeting.date)){
                 throw new MeetingException("This room is already booked");
             }
             //if everythinh ok, books the meeting
             meeting.close(meeting.room, meeting.date);
+        }
+
+        private Slot findSlot(List<Participant> participants, Slot slot){
+            List<Participant> participant_recursive = new List<Participant>(participants);
+            participant_recursive.RemoveAt(0); //remove first element
+            if (participants.Count == 0){
+                return slot;
+            } else if(participants[0].slotList.Contains(slot)){
+                return findSlot(participant_recursive,slot);
+            } else {
+                return null;
+            }
         }
 
         public void executeActionList(){

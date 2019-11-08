@@ -200,7 +200,15 @@ namespace client{
 
         //Closes a meeting
         void close(string meeting_topic){
-
+            IServer server = (IServer) Activator.GetObject(
+                typeof(IServer),
+                server_url);
+            try{
+                server.closeMeeting(meeting_topic, this.GetInfo());
+            } catch(MeetingException ex){
+                Console.WriteLine(ex.Message);
+            }
+            
         }
 
         //Delays the execution of the next command for x milliseconds

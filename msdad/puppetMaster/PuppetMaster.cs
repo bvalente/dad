@@ -159,6 +159,7 @@ namespace puppetMaster {
             if( locationList.ContainsKey(location_name)){
                 location = locationList[location_name];
             } else{
+                Console.WriteLine("new location: " + location_name);
                 location = new Location(location_name);
                 locationList.Add(location_name, location);
             }

@@ -30,6 +30,20 @@ namespace lib{
             this.location = location;
             this.date = date;
         }
+
+        // override object.Equals
+        public override bool Equals(object obj){
+
+            if (obj == null || GetType() != obj.GetType()){
+                return false;
+            } else if(this.location == ((Slot)obj).location &&
+                    this.date == ((Slot)obj).location){
+                return true;
+            } else{
+                return false;
+            }
+        }
+
     }
 
     [Serializable]
