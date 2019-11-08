@@ -57,6 +57,7 @@ namespace lib{
             this.location = location;
             this.capacity = capacity;
             this.room_name = room_name;
+            this.usedDates = new List<string>();
         }
     }
 

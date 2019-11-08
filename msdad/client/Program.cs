@@ -33,22 +33,25 @@ namespace client{
             TcpChannel channel = new TcpChannel(Int32.Parse(port));
             ChannelServices.RegisterChannel(channel, false); 
 
-            //create client
+            //create client and puppeteer
             Client client = new Client(username, client_url, server_url, script_file);
-            RemotingServices.Marshal(
-                client,
-                service,
-                typeof(Client));
-            
-            //create client puppeteer
             ClientPuppeteer puppeteer = new ClientPuppeteer(client);
+            
+            //marshall objects
             RemotingServices.Marshal(
                 puppeteer,
                 service + "Puppeteer",
                 typeof(ClientPuppeteer));
             
+            RemotingServices.Marshal(
+                client,
+                service,
+                typeof(Client));
+
+            
             //DEBUG
             Console.WriteLine("Client " + username +" created");
+            Console.WriteLine("service " + service); 
             Console.WriteLine(client.username + " PID: " +
                 Process.GetCurrentProcess().Id.ToString());
 

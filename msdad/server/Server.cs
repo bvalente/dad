@@ -207,6 +207,11 @@ namespace server{
             if(clientInfo.username != meetingList[meeting_topic].coordinator){
                 throw new MeetingException("This client can't close the meeting");
             }
+            //ver se tem numero de participantes necessario
+            if(meeting.participants.Count < meeting.minParticipants){
+                throw new MeetingException("Not enough participants");
+            }
+
             //check if there is available room at x date
             //ainda nao tem room
             //procurar uma room na location certa, ver se tem espaco
@@ -222,25 +227,52 @@ namespace server{
                 }
             }
             //possible slot tem todas as slots possiveis
-
+            if(possibleSlots.Count == 0){
+                throw new MeetingException("Nao ha slot possivel");
+            }
             //depois de encontrar os slots em comum
 
             //temos de encontrar uma sala com espaco
             //TODO:
+            Room room = null;
+            string date = null;
+            foreach(Slot slot in possibleSlots){
+                if( ! locationList.ContainsKey(slot.location)){
+                    throw new MeetingException("location " + slot.location + " does not exist");
+                }
 
-            if(meeting.room.usedDates.Contains(meeting.date)){
-                throw new MeetingException("This room is already booked");
+                Location location = locationList[slot.location];
+                string date2 = slot.date;
+                //procurar room na location com date disponivel
+                foreach(Room room2 in location.roomList){
+                    if ( ! room2.usedDates.Contains(date2) &&
+                            room2.capacity >= meeting.participants.Count){
+                        room = room2;
+                        date = date2;
+                        break;
+                    }
+                }
+
+                //se ja encontramos room, sai do loop
+                if(room != null) break;
             }
+
+            //ver se existe sala com espaco e data disponivel
+            if(room == null){
+                throw new MeetingException("No available rooms");
+            }
+
             //if everythinh ok, books the meeting
-            meeting.close(meeting.room, meeting.date);
+            meeting.close(room, date);
         }
 
         private Slot findSlot(List<Participant> participants, Slot slot){
-            List<Participant> participant_recursive = new List<Participant>(participants);
-            participant_recursive.RemoveAt(0); //remove first element
+            
             if (participants.Count == 0){
                 return slot;
             } else if(participants[0].slotList.Contains(slot)){
+                List<Participant> participant_recursive = new List<Participant>(participants);
+                participant_recursive.RemoveAt(0); //remove first element
                 return findSlot(participant_recursive,slot);
             } else {
                 return null;

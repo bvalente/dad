@@ -159,7 +159,6 @@ namespace puppetMaster {
             if( locationList.ContainsKey(location_name)){
                 location = locationList[location_name];
             } else{
-                Console.WriteLine("new location: " + location_name);
                 location = new Location(location_name);
                 locationList.Add(location_name, location);
             }
@@ -174,13 +173,13 @@ namespace puppetMaster {
                     pair.Value.url+"Puppeteer");
                 server.addRoom(location_name, Int32.Parse(capacity), room_name);
             }
-            
         }
 
         public void status(){
             //make all servers and clients print status
             //foreach servers
             foreach(KeyValuePair<string, ServerInfo> pair in serverList){
+                Console.WriteLine(pair.Value.url);
                 IServerPuppeteer server = (IServerPuppeteer) Activator.GetObject(
                     typeof(IServerPuppeteer),
                     pair.Value.url+"Puppeteer");
@@ -192,12 +191,14 @@ namespace puppetMaster {
             }
             //foreach clients
             foreach(KeyValuePair<string,ClientInfo> pair in clientList){
+                Console.WriteLine(pair.Value.client_url);
                 IClientPuppeteer client = (IClientPuppeteer) Activator.GetObject(
                     typeof(IClientPuppeteer),
                     pair.Value.client_url+"Puppeteer");
                 try{
-                    client.statusPuppeteer();    
+                    client.statusPuppeteer();
                 }catch(Exception ex){
+                    Console.WriteLine("aro!");
                     Console.WriteLine(ex.Message);
                 }
             }
