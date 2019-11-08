@@ -1,5 +1,7 @@
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
+
 
 namespace lib{
 
@@ -53,6 +55,10 @@ namespace lib{
 
         public ClientException(string message, Exception inner)
             : base(message, inner){
+        }
+
+        public ClientException(SerializationInfo info, StreamingContext context)
+            : base(info, context){
         }
     }
 }

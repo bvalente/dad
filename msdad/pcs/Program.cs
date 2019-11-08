@@ -58,6 +58,7 @@ namespace pcs{
         public ServerInfo createServer(string server_id, string url,
                  string max_faults, string min_delay, string max_delay){
  
+            //create server process
             string cPath = AppDomain.CurrentDomain.BaseDirectory;
             string filePath = Path.Combine(cPath,
                  "../../../../server/bin/Debug/net472/server.exe");

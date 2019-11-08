@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace lib{
 
@@ -78,6 +79,10 @@ namespace lib{
 
         public ServerException(string message, Exception inner)
             : base(message, inner){
+        }
+
+        public ServerException(SerializationInfo info, StreamingContext context)
+            : base(info, context){
         }
     }
 }

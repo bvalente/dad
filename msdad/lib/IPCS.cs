@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.Serialization;
 
 namespace lib{
 
@@ -25,6 +26,10 @@ namespace lib{
 
         public PCSException(string message, Exception inner) 
             :base(message, inner){
+        }
+        
+        public PCSException(SerializationInfo info, StreamingContext context)
+            : base(info, context){
         }
     }
 }

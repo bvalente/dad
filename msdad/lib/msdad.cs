@@ -98,15 +98,26 @@ namespace lib{
         public override string ToString(){
 
             string text = "";
-            text += "Coordinator: " + coordinator + "\n";
             text += "Topic: " + topic + "\n";
+            text += "Coordinator: " + coordinator + "\n";
             text += "Minimum Participants: " + minParticipants.ToString() + "\n";
             
+            text += "Slots:\n";
             foreach(Slot slot in slotList){
-                text += slot.location + ':' + slot.date + "\n";
+                text += "\t" + slot.location + ':' + slot.date + "\n";
             }
+            text += "Invited clients:\n";
             foreach(string invitee in invitees){
-                text += invitee + "\n";
+                text += "\t" + invitee + "\n";
+            }
+            text += "Participants\n";
+            foreach(Participant participant in participants){
+                text += "\t" + participant.client.username + "\n";
+            }
+            if (open){
+                text += "This meeting is open";
+            } else{
+                text += "This meeting is closed";
             }
 
             return text;
@@ -134,7 +145,6 @@ namespace lib{
 
         public MeetingException(SerializationInfo info, StreamingContext context)
             : base(info, context){
-
         }
     }
 }

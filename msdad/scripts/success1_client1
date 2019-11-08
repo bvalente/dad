@@ -3,5 +3,5 @@ create topic2 2 1 0 Lisboa,2020-01-02
 list
 join topic1 1 Porto,2020-02-03
 join topic2 1 Lisboa,2020-01-02
-wait 1000
+wait 500
 close topic1

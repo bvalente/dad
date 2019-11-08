@@ -22,5 +22,3 @@ run_client:
 run_client_ui:
 	#dotnet run -p ClientUI
 	mono ClientUI/bin/Debug/net472/ClientUI.exe
-
-#TODO add for loop to create multiple clients

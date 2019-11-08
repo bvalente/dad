@@ -186,7 +186,7 @@ namespace server{
             //see if the client is invited
             if(meeting.invitees.Count == 0 ||
                 meeting.invitees.Contains(client.username)){
-                //any client can join
+                //client can join
                 meeting.participants.Add(new Participant(client, slotList));
             } else {
                 

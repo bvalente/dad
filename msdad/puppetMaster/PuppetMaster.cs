@@ -85,7 +85,6 @@ namespace puppetMaster {
             }
             //Debug
             Console.WriteLine(command);
-
         }
 
         public void createServer(string server_id, string server_url, string max_faults,
@@ -103,18 +102,18 @@ namespace puppetMaster {
                 serverInfo = pcs.createServer(server_id, server_url,
                          max_faults, min_delay, max_delay);
             } catch(Exception ex){
-                //TODO catch diferent types of execeptions
+                //TODO catch PCS types of execeptions
                 Console.WriteLine("pcs connection failed");
                 Console.WriteLine(ex.Message);
                 return;
             }
             
-            //send all rooms available
+            //send all available rooms
             IServerPuppeteer server = (IServerPuppeteer) Activator.GetObject(
                 typeof(IServerPuppeteer),
                 server_url+"Puppeteer");
             try{
-                Thread.Sleep(2000); //TODO: ALTERAR
+                Thread.Sleep(2000); //TODO: make async
                 server.populate(locationList);
             } catch(Exception ex){
                 Console.WriteLine("connection to server failed");
@@ -124,7 +123,6 @@ namespace puppetMaster {
             //save server
             serverList.Add(server_id, serverInfo);
             window.addServer(serverInfo);
-            
         }
 
         public void createClient(string username, string client_url, string server_url,
@@ -141,7 +139,7 @@ namespace puppetMaster {
                 clientInfo = pcs.createClient(username, client_url, server_url,
                                 script_file);
             } catch(Exception ex){
-                //TODO catch diferent types of execeptions
+                //TODO catch PCS types of execeptions
                 Console.WriteLine("pcs connection failed");
                 Console.WriteLine(ex.Message);
                 return;
@@ -179,7 +177,6 @@ namespace puppetMaster {
             //make all servers and clients print status
             //foreach servers
             foreach(KeyValuePair<string, ServerInfo> pair in serverList){
-                Console.WriteLine(pair.Value.url);
                 IServerPuppeteer server = (IServerPuppeteer) Activator.GetObject(
                     typeof(IServerPuppeteer),
                     pair.Value.url+"Puppeteer");
@@ -191,14 +188,12 @@ namespace puppetMaster {
             }
             //foreach clients
             foreach(KeyValuePair<string,ClientInfo> pair in clientList){
-                Console.WriteLine(pair.Value.client_url);
                 IClientPuppeteer client = (IClientPuppeteer) Activator.GetObject(
                     typeof(IClientPuppeteer),
                     pair.Value.client_url+"Puppeteer");
                 try{
                     client.statusPuppeteer();
                 }catch(Exception ex){
-                    Console.WriteLine("aro!");
                     Console.WriteLine(ex.Message);
                 }
             }

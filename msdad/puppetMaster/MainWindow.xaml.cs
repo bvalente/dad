@@ -125,9 +125,9 @@ namespace puppetMaster{
             AvaloniaXamlLoader.Load(this);
         }
 
-        //Buttons here! only 499$ each
+        //Buttons here!
 
-        //load script and run it
+        //load script file and run it
         public void executeScript(object sender, RoutedEventArgs e){
 
             //load file and get commands
@@ -143,6 +143,7 @@ namespace puppetMaster{
             }
         }
 
+        //create server
         public void createServer(object sender, RoutedEventArgs e){
 
             string server_id = createServerID.Text; 
@@ -155,6 +156,7 @@ namespace puppetMaster{
 
         }
 
+        //create client
         public void createClient(object sender, RoutedEventArgs e){
 
             string username = createClient_username.Text;
@@ -165,6 +167,7 @@ namespace puppetMaster{
             puppetMaster.createClient(username, url, server_url, script_file);
         }
 
+        //add room
         public void addRoom(object sender, RoutedEventArgs e){
             
             string location = room_location.Text;
@@ -174,37 +177,41 @@ namespace puppetMaster{
             puppetMaster.addRoom(location, capacity, name);
         }
 
-
+        //print clients and servers status
         public void status(object sender, RoutedEventArgs e){
             
             puppetMaster.status();
         }
 
+        //crash server
         public void crash(object sender, RoutedEventArgs e){
             string server_id = crashServerID.Text;
             puppetMaster.crashServer(server_id);
 
         }
 
+        //freeze server
         public void freezeServer(object sender, RoutedEventArgs e){
             
             string server_id = freezeServerID.Text;
             puppetMaster.freezeServer(server_id);
         }
 
+        //unfreeze server
         public void unfreezeServer(object sender, RoutedEventArgs e){
             
             string server_id = unfreezeServerID.Text;
             puppetMaster.unfreezeServer(server_id);
         }
 
+        //freeze puppetmaster
         public void waitTime(object sender, RoutedEventArgs e){
 
             string time = waitTimeBox.Text;
             puppetMaster.wait(time);
         }
 
-        //update ui
+        //update client list
         public void addClient(ClientInfo client){
             TextBlock block = new TextBlock();
             block.Name = client.username;
@@ -212,6 +219,7 @@ namespace puppetMaster{
             clientPanel.Children.Add(block);
         }
 
+        //update server list
         public void addServer(ServerInfo server){
             TextBlock block = new TextBlock();
             block.Text = server.server_id;
@@ -219,6 +227,7 @@ namespace puppetMaster{
             serverPanel.Children.Add(block);
         }
 
+        //update server list
         public void removeServer(ServerInfo server){
             TextBlock block = this.Find<TextBlock>(server.server_id);
             serverPanel.Children.Remove(block);

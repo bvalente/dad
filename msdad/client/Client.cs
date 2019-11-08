@@ -51,6 +51,7 @@ namespace client{
             meetingList.Add(meeting.topic,meeting);
         }
 
+        //execute script file
         void executeScript(string fileName){
 
             //load file and get commands
@@ -65,6 +66,7 @@ namespace client{
             }
         }
 
+        //execute one command
         public void executeCommand(string command){
             //receives a command and executes respective function
             string[] cmds = command.Split(' ');
@@ -98,7 +100,6 @@ namespace client{
             }
         }
 
-        
         //Lists all available meetings
         void list(){
             //print meetings
@@ -109,18 +110,8 @@ namespace client{
             IServer server = (IServer) Activator.GetObject(
                 typeof(IServer),
                 server_url);
-            ListDelegate del = new ListDelegate(server.getMeetings); //TODO replace ping
-            del.BeginInvoke(listCallback,null);
-        }
-        //delegate
-        delegate Dictionary<string,MeetingProposal> ListDelegate();
-        //callback
-        void listCallback(IAsyncResult ar){
-            //will be called when delegate is over
-            ListDelegate del = (ListDelegate)((AsyncResult)ar).AsyncDelegate;
-            meetingList.Clear();
-            meetingList = del.EndInvoke(ar);
-            //TODO
+            ListDelegate del = new ListDelegate(server.getMeetings);
+            del.BeginInvoke(updateCallback,null);
         }
         
         //Creates a new meeting
@@ -148,11 +139,6 @@ namespace client{
             MeetingProposal meeting = new MeetingProposal(this.username,
                 meeting_topic, min_attendees, slotList, invitees);
             
-            //what to do with the meeting?
-
-            //guardar meeting
-
-
             //get server
             IServer server = (IServer) Activator.GetObject(
                 typeof(IServer), 
@@ -161,24 +147,25 @@ namespace client{
             //try to create meeting
             try{
                 server.createMeeting(meeting);
-            } catch(Exception ex){
-
-                //TODO nossas excepcoes
+            } catch(MeetingException ex){
+                Console.WriteLine(ex.Message);
+                return;
+            }catch(Exception ex){
                 Console.WriteLine("connection with server failed");
 				Console.WriteLine(ex.Message);
                 return;
             }
 
-            //pedir mais meetings?
             meetingList.Add(meeting.topic, meeting);
-            
 
+  
         }
 
         //Joins an existing meeting
         void join(string[] args){
             string meeting_topic = args[1];
             int number_of_slots = Int32.Parse(args[2]);
+            //parse slots
             List<Slot> slotList = new List<Slot>();
             for(int i = 3; i < number_of_slots + 3;i++){
                 string[] str = args[i].Split(',');
@@ -186,16 +173,19 @@ namespace client{
                 slotList.Add(slot);
             }
 
+            //get server
             IServer server = (IServer) Activator.GetObject(
                 typeof(IServer),
                 server_url);
-            //TODO try catch
+
+            //try to join meeting
             try{
                 server.joinClient(this.GetInfo(), meeting_topic, slotList);
             }catch(MeetingException ex){
                 Console.WriteLine(ex.Message);
-            }            
+            }
 
+ 
         }
 
         //Closes a meeting
@@ -203,11 +193,15 @@ namespace client{
             IServer server = (IServer) Activator.GetObject(
                 typeof(IServer),
                 server_url);
+            //try to close meeting
             try{
                 server.closeMeeting(meeting_topic, this.GetInfo());
             } catch(MeetingException ex){
                 Console.WriteLine(ex.Message);
             }
+            //get meetings
+            ListDelegate del = new ListDelegate(server.getMeetings);
+            del.BeginInvoke(updateCallback,null);
             
         }
 
@@ -228,6 +222,17 @@ namespace client{
             foreach(KeyValuePair<string, MeetingProposal> key in meetingList){
                 Console.WriteLine(key.Value);
             }
+        }
+
+        //update meetings async
+        //delegate
+        delegate Dictionary<string,MeetingProposal> ListDelegate();
+        //callback
+        void updateCallback(IAsyncResult ar){
+            //will be called when delegate is over
+            ListDelegate del = (ListDelegate)((AsyncResult)ar).AsyncDelegate;
+            meetingList.Clear();
+            meetingList = del.EndInvoke(ar);
         }
     }
 
@@ -253,6 +258,7 @@ namespace client{
             return;
         }
 
+        //print client status
         public void statusPuppeteer(){
             client.status();
         }
