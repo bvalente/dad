@@ -44,7 +44,15 @@ namespace lib{
             }
         }
 
-    }
+        //overide object.GetHashCode
+		public override int GetHashCode(){
+            
+			var hashCode = -1573050897;
+			hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(location);
+			hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(date);
+			return hashCode;
+		}
+	}
 
     [Serializable]
     public class Room{

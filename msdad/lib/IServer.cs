@@ -5,7 +5,6 @@ using System.Runtime.Serialization;
 namespace lib{
 
     // class with important server info
-    // TODO discuss serverInfo important values
     [Serializable]
     public class ServerInfo{
 
@@ -24,6 +23,7 @@ namespace lib{
         }
     }
 
+    //interface for clients
     public interface IServer{
 
         // simple ping to check server status
@@ -46,6 +46,7 @@ namespace lib{
 
     }
 
+    //interface for other servers
     public interface IServerToServer{
 
         //send this server info to other servers
@@ -55,6 +56,7 @@ namespace lib{
         void addMeeting(MeetingProposal meeting);
     }
 
+    //interface for Puppet Master
     public interface IServerPuppeteer{
         
         // simple ping to check server status

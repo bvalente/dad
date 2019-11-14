@@ -1,14 +1,9 @@
 using System;
-using lib;
 using System.Collections.Generic;
 using System.Runtime.Remoting.Messaging;
-using System.Runtime.Remoting;
-using System.Runtime.Remoting.Channels.Tcp;
-using System.Runtime.Remoting.Channels;
-using System.Net.Sockets;
-using System.Diagnostics;
 using System.Threading;
 using System.IO;
+using lib;
 
 namespace client{
 	
@@ -234,34 +229,5 @@ namespace client{
             meetingList.Clear();
             meetingList = del.EndInvoke(ar);
         }
-    }
-
-    //interface for the Puppet Master
-    public class ClientPuppeteer : MarshalByRefObject, IClientPuppeteer{
-
-        //Client interface to access data
-        public Client client;
-
-        //constructor
-        public ClientPuppeteer(Client client){
-            this.client = client;
-        }
-
-        //simple ping
-        public string ping(){
-            return "Client "+client.username+" is online";
-        }
-
-        //wait x miliseconds
-        public void wait(int x){
-            Thread.Sleep(x);
-            return;
-        }
-
-        //print client status
-        public void statusPuppeteer(){
-            client.status();
-        }
-
     }
 }

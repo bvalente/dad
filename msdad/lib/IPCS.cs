@@ -3,6 +3,7 @@ using System.Runtime.Serialization;
 
 namespace lib{
 
+    //interface for Puppet Master
     public interface IPCS{
         // simple ping to check PCS status
         string ping();
