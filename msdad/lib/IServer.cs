@@ -43,6 +43,16 @@ namespace lib{
 
         //closes meeting
         void closeMeeting(string meeting_topic, ClientInfo clientInfo);
+
+    }
+
+    public interface IServerToServer{
+
+        //send this server info to other servers
+        void addNewServer(ServerInfo server);
+
+        //send meeting to other servers
+        void addMeeting(MeetingProposal meeting);
     }
 
     public interface IServerPuppeteer{
@@ -56,8 +66,9 @@ namespace lib{
         //add room
         void addRoom(string location_name, int capacity, string room_name);
 
-        //populate with locations
-        void populate(Dictionary<string,Location> locationList);
+        //populate with locations and servers
+        void populate(Dictionary<string,Location> locationList, 
+            Dictionary<string, ServerInfo> serverList);
 
         //freeze server
         void freeze();

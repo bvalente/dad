@@ -27,6 +27,9 @@ namespace server{
         //client database
         Dictionary<string, ClientInfo> clientList;
 
+        //save other servers
+        Dictionary<string, ServerInfo> serverList;
+
         //meetings database
         Dictionary<string,MeetingProposal> meetingList;
 
@@ -279,12 +282,56 @@ namespace server{
             }
         }
 
+        public void addOldServers( Dictionary<string, ServerInfo> serverList){
+
+            ServerInfo me = this.GetInfo();
+            foreach(KeyValuePair<string, ServerInfo> pair in serverList){
+                //save server
+                this.serverList.Add(pair.Key, pair.Value);
+                //connect to server and send my info
+                IServerToServer server = (ServerToServer) Activator.GetObject(
+                    typeof(IServerToServer),
+                    pair.Value.url + "ToServer");
+                server.addNewServer(me);
+            }
+        }
+
+        public void addNewServer(ServerInfo serverInfo){
+            serverList.Add(serverInfo.server_id,serverInfo);
+        }
+
+        public void addMeeting(MeetingProposal meeting){
+            meetingList.Add(meeting.topic,meeting);
+        }
+
+        public ServerInfo GetInfo(){
+            return new ServerInfo(server_id,url,max_faults.ToString()
+                ,min_delay.ToString(),max_delay.ToString());
+        }
+
         public void executeActionList(){
             //foreach
             foreach(Action action in actionList){
                 action();
             }
             actionList.Clear();
+        }
+    }
+
+    public class ServerToServer : MarshalByRefObject, IServerToServer {
+
+        Server server;
+
+        public ServerToServer(Server server){
+            this.server = server;
+        }
+
+        public void addNewServer(ServerInfo serverInfo){
+            server.addNewServer(serverInfo);
+        }
+
+        public void addMeeting(MeetingProposal meeting){
+            server.addMeeting(meeting);
         }
     }
 
@@ -306,8 +353,10 @@ namespace server{
             server.status();
         }
 
-        public void populate(Dictionary<string, Location> locationList){
+        public void populate(Dictionary<string, Location> locationList,
+                Dictionary<string, ServerInfo> serverList){
             server.locationList = locationList;
+            server.addOldServers(serverList);
         }
 
         public void addRoom(string location_name, int capacity, string room_name){

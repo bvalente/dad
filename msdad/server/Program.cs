@@ -34,12 +34,18 @@ namespace server{
             //create server and puppeteer
             Server server = new Server(server_id, url, max_faults_int, min_delay_int, max_delay_int);
             ServerPuppeteer puppeteer = new ServerPuppeteer(server);
+            ServerToServer serverToServer = new ServerToServer(server);
 
             //marshall objects
             RemotingServices.Marshal(
                 puppeteer,
                 service + "Puppeteer",
                 typeof(ServerPuppeteer));
+            
+            RemotingServices.Marshal(
+                serverToServer,
+                service + "ToServer",
+                typeof(ServerToServer));
 
             RemotingServices.Marshal(
                 server,

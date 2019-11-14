@@ -114,7 +114,7 @@ namespace puppetMaster {
                 server_url+"Puppeteer");
             try{
                 Thread.Sleep(2000); //TODO: make async
-                server.populate(locationList);
+                server.populate(locationList,serverList);
             } catch(Exception ex){
                 Console.WriteLine("connection to server failed");
                 Console.WriteLine(ex.Message);
