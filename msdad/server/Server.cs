@@ -345,6 +345,14 @@ namespace server{
                 meetingList.Remove(meeting.topic);
             }
             meetingList.Add(meeting.topic,meeting);
+
+            //send meeting info to clients
+            foreach(KeyValuePair<string, ClientInfo> pair in clientList){
+                IClient client = (IClient) Activator.GetObject(
+                    typeof(IClient),
+                    pair.Value.client_url);
+                client.sendMeeting(meeting);
+            }
         }
 
         public ServerInfo GetInfo(){

@@ -44,6 +44,10 @@ namespace client{
         //receive meeting from server and save it
         public void sendMeeting(MeetingProposal meeting){
             lock(meetingList){
+                //if already exists, replace
+                if(meetingList.ContainsKey(meeting.topic)){
+                    meetingList.Remove(meeting.topic);
+                }
                 meetingList.Add(meeting.topic,meeting);
             }
         }
