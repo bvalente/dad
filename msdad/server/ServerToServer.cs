@@ -17,6 +17,7 @@ namespace server{
 
         public void addMeeting(MeetingProposal meeting){
             server.addMeeting(meeting);
+            Console.WriteLine("meeting %s added", meeting.topic);
         }
     }
 }

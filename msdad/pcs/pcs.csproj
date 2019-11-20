@@ -2,6 +2,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\lib\lib.csproj" />
+    <ProjectReference Include="..\client\client.csproj" />
+    <ProjectReference Include="..\server\server.csproj" />
     <Reference Include="System.Runtime.Remoting">
       <Name>System.Runtime.Remoting</Name>
     </Reference>

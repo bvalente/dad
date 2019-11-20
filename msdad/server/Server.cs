@@ -42,6 +42,7 @@ namespace server{
             this.max_delay = max_delay;
 
             clientList = new Dictionary<string, ClientInfo>();
+            serverList = new Dictionary<string, ServerInfo>();
 			meetingList = new Dictionary<string,MeetingProposal>();
             actionList = new List<Action>();
             locationList = new Dictionary<string, Location>();
@@ -75,7 +76,10 @@ namespace server{
                 senders = new List<ClientInfo>( clientList.Values);
             } else{
                 foreach(String invitee in meeting.invitees){
-                    senders.Add(clientList[invitee]);
+                    //only send meeting if the server knows the invitee
+                    if(clientList.ContainsKey(invitee)){
+                        senders.Add(clientList[invitee]);
+                    }
                 }
             }
 
@@ -91,6 +95,16 @@ namespace server{
 
             //add meeting to list
             meetingList.Add(meeting.topic,meeting);
+
+            //TODO async
+            //send meeting to other servers
+            foreach(KeyValuePair<string, ServerInfo> pair in serverList){
+                IServerToServer server = (IServerToServer) Activator.GetObject(
+                    typeof(IServerToServer),
+                    pair.Value.url + "ToServer");
+                
+                server.addMeeting(meeting);
+            }
 
         }
 
@@ -110,7 +124,15 @@ namespace server{
             //add client
             clientList.Add(clientInfo.username,clientInfo);
 
-            //TODO send client info to other servers
+            //populate client with meetings
+            foreach(KeyValuePair<string, MeetingProposal> pair in meetingList){
+                IClient client = (IClient) Activator.GetObject(
+                    typeof(IClient),
+                    clientInfo.client_url);
+                client.sendMeeting(pair.Value);
+            }
+
+            //TODO send client info to other servers?
         }
 
         public void addRoom(string location_name, int capacity, string room_name){
@@ -184,21 +206,34 @@ namespace server{
             
             //see if the client is invited
             if(meeting.invitees.Count == 0 ||
-                meeting.invitees.Contains(client.username)){
+                    meeting.invitees.Contains(client.username)){
                 //client can join
                 meeting.participants.Add(new Participant(client, slotList));
             } else {
                 
                 throw new MeetingException("client " + client.username + 
                         " can not participate in " + meeting_topic);
-                
+            }
+
+            //update other servers
+            foreach(KeyValuePair<string, ServerInfo> pair in serverList){
+                IServerToServer server = (IServerToServer) Activator.GetObject(
+                    typeof(IServerToServer),
+                    pair.Value.url + "ToServer");
+                server.addMeeting(meeting);
             }
         }
 
         //book a meeting
         public void closeMeeting(string meeting_topic, ClientInfo clientInfo){
-            //look for meeting, check if it is fine
+
+            //procurar meeting list, ver se existe
+            if( ! meetingList.ContainsKey(meeting_topic)){
+                throw new MeetingException("meeting does not exist");
+            }
             MeetingProposal meeting = meetingList[meeting_topic];
+
+            //check if meeting is already closed
             if(meeting.open == false){
                throw new MeetingException("Meeting is already closed");
             }
@@ -263,6 +298,14 @@ namespace server{
 
             //if everythinh ok, books the meeting
             meeting.close(room, date);
+
+            //update other servers
+            foreach(KeyValuePair<string, ServerInfo> pair in serverList){
+                IServerToServer server = (IServerToServer) Activator.GetObject(
+                    typeof(IServerToServer),
+                    pair.Value.url + "ToServer");
+                server.addMeeting(meeting);
+            }
         }
 
         private Slot findSlot(List<Participant> participants, Slot slot){
@@ -297,6 +340,10 @@ namespace server{
         }
 
         public void addMeeting(MeetingProposal meeting){
+            //if already exists, replace
+            if(meetingList.ContainsKey(meeting.topic)){
+                meetingList.Remove(meeting.topic);
+            }
             meetingList.Add(meeting.topic,meeting);
         }
 
