@@ -43,7 +43,9 @@ namespace client{
 
         //receive meeting from server and save it
         public void sendMeeting(MeetingProposal meeting){
-            meetingList.Add(meeting.topic,meeting);
+            lock(meetingList){
+                meetingList.Add(meeting.topic,meeting);
+            }
         }
 
         //execute script file
@@ -98,8 +100,10 @@ namespace client{
         //Lists all available meetings
         void list(){
             //print meetings
-            foreach(KeyValuePair<string, MeetingProposal> key in meetingList){
-                Console.WriteLine(key.Value);
+            lock(meetingList){
+                foreach(KeyValuePair<string, MeetingProposal> key in meetingList){
+                    Console.WriteLine(key.Value);
+                }
             }
             //async ask for update
             IServer server = (IServer) Activator.GetObject(
@@ -226,8 +230,10 @@ namespace client{
         void updateCallback(IAsyncResult ar){
             //will be called when delegate is over
             ListDelegate del = (ListDelegate)((AsyncResult)ar).AsyncDelegate;
-            meetingList.Clear();
-            meetingList = del.EndInvoke(ar);
+            lock(meetingList){
+                meetingList.Clear();
+                meetingList = del.EndInvoke(ar);
+            }
         }
     }
 }
