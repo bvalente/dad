@@ -3,6 +3,7 @@ using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
 using System.Diagnostics;
+using lib;
 
 namespace client{
 
@@ -36,7 +37,7 @@ namespace client{
             //marshall objects
             RemotingServices.Marshal(
                 puppeteer,
-                service + "Puppeteer",
+                service + ClientInfo.puppeteerExtension,
                 typeof(ClientPuppeteer));
             
             RemotingServices.Marshal(

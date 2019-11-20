@@ -46,13 +46,17 @@ namespace server{
 			meetingList = new Dictionary<string,MeetingProposal>();
             actionList = new List<Action>();
             locationList = new Dictionary<string, Location>();
-            //TODO load client/meetings database
+            //TODO load client/meetings database ?
         }
 
+        //Implementation of IServer interface methods        
+
+        //IServer.ping
         public string ping(){
             return "server is online";
         }
 
+        //IServer.createMeeting
         public void createMeeting(MeetingProposal meeting){
             //REMINDER coordinator is in the meeting class
             
@@ -101,13 +105,14 @@ namespace server{
             foreach(KeyValuePair<string, ServerInfo> pair in serverList){
                 IServerToServer server = (IServerToServer) Activator.GetObject(
                     typeof(IServerToServer),
-                    pair.Value.url + "ToServer");
+                    pair.Value.url_to_server);
                 
                 server.addMeeting(meeting);
             }
 
         }
 
+        //IServer.addClient
         public void addClient(ClientInfo clientInfo){
             //check if server is frozen
             if(this.freeze == true){
@@ -135,60 +140,12 @@ namespace server{
             //TODO send client info to other servers?
         }
 
-        public void addRoom(string location_name, int capacity, string room_name){
-            //look for location
-            Location location;
-            if(locationList.ContainsKey(location_name)){
-                location = locationList[location_name];
-            }    
-            else {
-                location = new Location(location_name);
-                locationList.Add(location_name, location);
-                //Debug
-                Console.WriteLine("Location added " + location_name);
-            }
-            
-            //create room
-            Room room = location.addRoom(room_name, capacity);
-            //Debug
-            Console.WriteLine("Room added " + room.room_name);
-            
-        }
-
+        //IServer.getMeetings
         public Dictionary<string,MeetingProposal> getMeetings(){
             return this.meetingList;
         }
 
-        public void status(){
-            //each server prints it's own server_id
-            Console.WriteLine(server_id);
-            
-            //print freeze status
-            if(freeze == true){
-                Console.WriteLine("Server is frozen"); //let it go
-            } else {
-                Console.WriteLine("Server is not frozen");
-            }
-
-            //print clients
-            foreach(KeyValuePair<string, ClientInfo> pair in clientList){
-                Console.WriteLine(pair.Key);
-            }
-            //print rooms
-            foreach(KeyValuePair<string,Location> pair in locationList){
-                Console.WriteLine(pair.Key);
-                foreach(Room room in pair.Value.roomList){
-                    Console.WriteLine("\t" + room.room_name);
-                    foreach(string date in room.usedDates){
-                        Console.WriteLine("\t\t" + date);
-                    }
-                }
-            }
-            foreach(KeyValuePair<string, MeetingProposal> key in meetingList){
-                Console.WriteLine(key.Value);
-            }
-        }
-
+        //IServer.joinClient
         public void joinClient(ClientInfo client, string meeting_topic, List<Slot> slotList){
             //slotList e a lista de disponibilidade do cliente
             
@@ -219,12 +176,12 @@ namespace server{
             foreach(KeyValuePair<string, ServerInfo> pair in serverList){
                 IServerToServer server = (IServerToServer) Activator.GetObject(
                     typeof(IServerToServer),
-                    pair.Value.url + "ToServer");
+                    pair.Value.url_to_server);
                 server.addMeeting(meeting);
             }
         }
 
-        //book a meeting
+        //IServer.closeMeeting
         public void closeMeeting(string meeting_topic, ClientInfo clientInfo){
 
             //procurar meeting list, ver se existe
@@ -303,24 +260,47 @@ namespace server{
             foreach(KeyValuePair<string, ServerInfo> pair in serverList){
                 IServerToServer server = (IServerToServer) Activator.GetObject(
                     typeof(IServerToServer),
-                    pair.Value.url + "ToServer");
+                    pair.Value.url_to_server);
                 server.addMeeting(meeting);
             }
         }
 
-        private Slot findSlot(List<Participant> participants, Slot slot){
+        //End of IServer implementation
+
+        //Methods for other interfaces
+
+        //ServerPuppeteer statusPuppeteer
+        public void status(){
+            //each server prints it's own server_id
+            Console.WriteLine(server_id);
             
-            if (participants.Count == 0){
-                return slot;
-            } else if(participants[0].slotList.Contains(slot)){
-                List<Participant> participant_recursive = new List<Participant>(participants);
-                participant_recursive.RemoveAt(0); //remove first element
-                return findSlot(participant_recursive,slot);
+            //print freeze status
+            if(freeze == true){
+                Console.WriteLine("Server is frozen"); //let it go
             } else {
-                return null;
+                Console.WriteLine("Server is not frozen");
+            }
+
+            //print clients
+            foreach(KeyValuePair<string, ClientInfo> pair in clientList){
+                Console.WriteLine(pair.Key);
+            }
+            //print rooms
+            foreach(KeyValuePair<string,Location> pair in locationList){
+                Console.WriteLine(pair.Key);
+                foreach(Room room in pair.Value.roomList){
+                    Console.WriteLine("\t" + room.room_name);
+                    foreach(string date in room.usedDates){
+                        Console.WriteLine("\t\t" + date);
+                    }
+                }
+            }
+            foreach(KeyValuePair<string, MeetingProposal> key in meetingList){
+                Console.WriteLine(key.Value);
             }
         }
 
+        //ServerPuppeteer populate
         public void addOldServers( Dictionary<string, ServerInfo> serverList){
 
             ServerInfo me = this.GetInfo();
@@ -330,15 +310,47 @@ namespace server{
                 //connect to server and send my info
                 IServerToServer server = (ServerToServer) Activator.GetObject(
                     typeof(IServerToServer),
-                    pair.Value.url + "ToServer");
+                    pair.Value.url_to_server);
                 server.addNewServer(me);
             }
         }
+        
+        //ServerPuppeteer addRoom
+        public void addRoom(string location_name, int capacity, string room_name){
+            //look for location
+            Location location;
+            if(locationList.ContainsKey(location_name)){
+                location = locationList[location_name];
+            }    
+            else {
+                location = new Location(location_name);
+                locationList.Add(location_name, location);
+                //Debug
+                Console.WriteLine("Location added " + location_name);
+            }
+            
+            //create room
+            Room room = location.addRoom(room_name, capacity);
+            //Debug
+            Console.WriteLine("Room added " + room.room_name);
+            
+        }
 
+        //ServerPuppeteer unfreeze
+        public void executeActionList(){
+            //Async execute actions after unfreeze
+            foreach(Action action in actionList){
+                action();
+            }
+            actionList.Clear();
+        }
+
+        //ServerToServer addNewServer
         public void addNewServer(ServerInfo serverInfo){
             serverList.Add(serverInfo.server_id,serverInfo);
         }
 
+        //ServerToServer addMeeting
         public void addMeeting(MeetingProposal meeting){
             //if already exists, replace
             if(meetingList.ContainsKey(meeting.topic)){
@@ -355,18 +367,29 @@ namespace server{
             }
         }
 
+        //End of other interfaces methods
+
+        //Other helpful methods
+
+        //recursive function to search fot available slots
+        private Slot findSlot(List<Participant> participants, Slot slot){
+            
+            if (participants.Count == 0){
+                return slot;
+            } else if(participants[0].slotList.Contains(slot)){
+                List<Participant> participant_recursive = new List<Participant>(participants);
+                participant_recursive.RemoveAt(0); //remove first element
+                return findSlot(participant_recursive,slot);
+            } else {
+                return null;
+            }
+        }
+
+        //generate ServerInfo
         public ServerInfo GetInfo(){
             return new ServerInfo(server_id,url,max_faults.ToString()
                 ,min_delay.ToString(),max_delay.ToString());
         }
 
-        public void executeActionList(){
-            //foreach
-            foreach(Action action in actionList){
-                action();
-            }
-            actionList.Clear();
-        }
     }
-
 }

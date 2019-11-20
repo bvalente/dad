@@ -111,7 +111,7 @@ namespace puppetMaster {
             //send all available rooms
             IServerPuppeteer server = (IServerPuppeteer) Activator.GetObject(
                 typeof(IServerPuppeteer),
-                server_url+"Puppeteer");
+                serverInfo.url_puppeteer);
             try{
                 Thread.Sleep(2000); //TODO: make async
                 server.populate(locationList,serverList);
@@ -168,7 +168,7 @@ namespace puppetMaster {
             foreach(KeyValuePair<string,ServerInfo> pair in serverList){
                 IServerPuppeteer server = (IServerPuppeteer) Activator.GetObject(
                     typeof(IServerPuppeteer),
-                    pair.Value.url+"Puppeteer");
+                    pair.Value.url_puppeteer);
                 server.addRoom(location_name, Int32.Parse(capacity), room_name);
             }
         }
@@ -179,7 +179,7 @@ namespace puppetMaster {
             foreach(KeyValuePair<string, ServerInfo> pair in serverList){
                 IServerPuppeteer server = (IServerPuppeteer) Activator.GetObject(
                     typeof(IServerPuppeteer),
-                    pair.Value.url+"Puppeteer");
+                    pair.Value.url_puppeteer);
                 try{
                     server.statusPuppeteer();
                 } catch(Exception ex){
@@ -190,7 +190,7 @@ namespace puppetMaster {
             foreach(KeyValuePair<string,ClientInfo> pair in clientList){
                 IClientPuppeteer client = (IClientPuppeteer) Activator.GetObject(
                     typeof(IClientPuppeteer),
-                    pair.Value.client_url+"Puppeteer");
+                    pair.Value.client_url_puppeteer);
                 try{
                     client.statusPuppeteer();
                 }catch(Exception ex){
@@ -204,7 +204,7 @@ namespace puppetMaster {
             ServerInfo serverInfo = serverList[server_id];
             IServerPuppeteer server = (IServerPuppeteer) Activator.GetObject(
                     typeof(IServerPuppeteer),
-                    serverInfo.url+"Puppeteer");
+                    serverInfo.url_puppeteer);
 
             //async crash
             Action action = new Action(server.kill);
@@ -220,7 +220,7 @@ namespace puppetMaster {
             ServerInfo serverInfo = serverList[server_id];
             IServerPuppeteer server = (IServerPuppeteer) Activator.GetObject(
                 typeof(IServerPuppeteer),
-                serverInfo.url+"Puppeteer");
+                serverInfo.url_puppeteer);
             server.freeze();
             
         }
@@ -230,7 +230,7 @@ namespace puppetMaster {
             ServerInfo serverInfo = serverList[server_id];
             IServerPuppeteer server = (IServerPuppeteer) Activator.GetObject(
                 typeof(IServerPuppeteer),
-                serverInfo.url+"Puppeteer");
+                serverInfo.url_puppeteer);
             server.unfreeze();
         }
 

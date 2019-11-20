@@ -2,6 +2,7 @@
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
+using lib;
 
 namespace server{
 
@@ -36,12 +37,12 @@ namespace server{
             //marshall objects
             RemotingServices.Marshal(
                 puppeteer,
-                service + "Puppeteer",
+                service + ServerInfo.puppeteerExtension,
                 typeof(ServerPuppeteer));
             
             RemotingServices.Marshal(
                 serverToServer,
-                service + "ToServer",
+                service + ServerInfo.toServerExtension,
                 typeof(ServerToServer));
 
             RemotingServices.Marshal(

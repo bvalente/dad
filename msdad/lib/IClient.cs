@@ -7,14 +7,18 @@ namespace lib{
     [Serializable]
     public class ClientInfo {
 
+        public static string puppeteerExtension = "Puppeteer";
+
         public string username;
         public string client_url;
+        public string client_url_puppeteer;
         public string server_url;
         public string script_file;
 
         public ClientInfo(string username, string client_url, string server_url, string script_file){
             this.username = username;
             this.client_url = client_url;
+            this.client_url_puppeteer = client_url + puppeteerExtension;
             this.server_url = server_url;
             this.script_file = script_file;
         }

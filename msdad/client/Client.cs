@@ -36,11 +36,15 @@ namespace client{
 
         }
 
+        //Implementation of IClient interface methods
+
+        //IClient.ping
         //simple ping 
         public string ping(){
             return "client is online";
         }
 
+        //IClient.sendMeeting
         //receive meeting from server and save it
         public void sendMeeting(MeetingProposal meeting){
             lock(meetingList){
@@ -51,6 +55,10 @@ namespace client{
                 meetingList.Add(meeting.topic,meeting);
             }
         }
+
+        //End of IClient implementation
+
+        //Script methods
 
         //execute script file
         void executeScript(string fileName){
@@ -214,10 +222,15 @@ namespace client{
             Thread.Sleep(time_int);
         }
 
+        //End of script mehtods
+
+        //Other helpful methods
+
         ClientInfo GetInfo(){
             return new ClientInfo(username, client_url, server_url, script_file);
         }
         
+        //ClientPuppeteer statusPuppeteer
         public void status(){
             //print name
             Console.WriteLine(username);

@@ -8,8 +8,13 @@ namespace lib{
     [Serializable]
     public class ServerInfo{
 
+        public static string puppeteerExtension = "Puppeteer";
+        public static string toServerExtension = "ToServer";
+
         public string server_id;
         public string url;
+        public string url_puppeteer;
+        public string url_to_server;
         public string max_faults;
         public string min_delay;
         public string max_delay;
@@ -17,6 +22,8 @@ namespace lib{
         public ServerInfo(string server_id, string url, string max_faults, string min_delay, string max_delay){
             this.server_id = server_id;
             this.url = url;
+            this.url_puppeteer = url + puppeteerExtension;
+            this.url_to_server = url + toServerExtension;
             this.max_faults = max_faults;
             this.min_delay = min_delay;
             this.max_delay = max_delay;
