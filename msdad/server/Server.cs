@@ -2,6 +2,7 @@ using System;
 using lib;
 using System.Collections.Generic;
 using System.Threading;
+using Serilog;
 
 namespace server{
 	
@@ -48,6 +49,8 @@ namespace server{
             actionList = new List<Action>();
             locationList = new Dictionary<string, Location>();
             //TODO load client/meetings database ?
+
+            Log.Debug("test1");
         }
 
         //Implementation of IServer interface methods        

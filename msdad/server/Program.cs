@@ -2,6 +2,7 @@
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
+using Serilog;
 using lib;
 
 namespace server{
@@ -28,6 +29,15 @@ namespace server{
             int max_faults_int = Int32.Parse(max_faults);
             int min_delay_int = Int32.Parse(min_delay);
             int max_delay_int = Int32.Parse(max_delay);
+
+            //Initialize debugger
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console()
+                .CreateLogger();
+            // Log.Information("");
+            // Log.Debug("");
+            // Log.Error("");
             
             //create server, puppeteer and serverToServer
             Server server = new Server(server_id, url, max_faults_int, min_delay_int, max_delay_int);
@@ -52,7 +62,8 @@ namespace server{
 
             
             //DEBUG
-            Console.WriteLine("New server created");
+            //Console.WriteLine("New server created");
+            Log.Debug("New server created");
 
             //prevent process from closing
             System.Console.ReadLine();
