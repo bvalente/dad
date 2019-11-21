@@ -1,0 +1,10 @@
+wait 100
+create myTopic0 1 2 2 Lisboa,2020-01-02 Porto,2020-02-03 c1 c2
+wait 2000
+list
+join myTopic0 1 Lisboa,2020-01-02
+wait 5000
+list
+close myTopic0
+wait 1000
+list

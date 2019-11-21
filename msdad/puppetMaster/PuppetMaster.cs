@@ -113,7 +113,7 @@ namespace puppetMaster {
                 typeof(IServerPuppeteer),
                 serverInfo.url_puppeteer);
             try{
-                Thread.Sleep(2000); //TODO: make async
+                Thread.Sleep(500); //TODO: make async
                 server.populate(locationList,serverList);
             } catch(Exception ex){
                 Console.WriteLine("connection to server failed");

@@ -1,6 +1,7 @@
 using System;
 using lib;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace server{
 	
@@ -98,10 +99,13 @@ namespace server{
             }
 
             //add meeting to list
-            meetingList.Add(meeting.topic,meeting);
+            lock(meetingList){
+                meetingList.Add(meeting.topic,meeting);
+            }
 
             //TODO async
             //send meeting to other servers
+            /*
             foreach(KeyValuePair<string, ServerInfo> pair in serverList){
                 IServerToServer server = (IServerToServer) Activator.GetObject(
                     typeof(IServerToServer),
@@ -109,6 +113,10 @@ namespace server{
                 
                 server.addMeeting(meeting);
             }
+            */
+            //Async
+            UpdateServersDelegate del = new UpdateServersDelegate(this.updateServers);
+            del.BeginInvoke(meeting,null,null);
 
         }
 
@@ -129,13 +137,7 @@ namespace server{
             //add client
             clientList.Add(clientInfo.username,clientInfo);
 
-            //populate client with meetings
-            foreach(KeyValuePair<string, MeetingProposal> pair in meetingList){
-                IClient client = (IClient) Activator.GetObject(
-                    typeof(IClient),
-                    clientInfo.client_url);
-                client.sendMeeting(pair.Value);
-            }
+            //client is responsible for fetching meetings
 
             //TODO send client info to other servers?
         }
@@ -150,10 +152,13 @@ namespace server{
             //slotList e a lista de disponibilidade do cliente
             
             //procurar meeting list, ver se existe
-            if( ! meetingList.ContainsKey(meeting_topic)){
-                throw new MeetingException("meeting does not exist");
+            MeetingProposal meeting;
+            lock(meetingList){
+                if( ! meetingList.ContainsKey(meeting_topic)){
+                    throw new MeetingException("meeting does not exist");
+                }
+                meeting = meetingList[meeting_topic];
             }
-            MeetingProposal meeting = meetingList[meeting_topic];
 
             
             //ver se esta aberta
@@ -185,10 +190,13 @@ namespace server{
         public void closeMeeting(string meeting_topic, ClientInfo clientInfo){
 
             //procurar meeting list, ver se existe
-            if( ! meetingList.ContainsKey(meeting_topic)){
-                throw new MeetingException("meeting does not exist");
+            MeetingProposal meeting;
+            lock(meetingList){
+                if( ! meetingList.ContainsKey(meeting_topic)){
+                    throw new MeetingException("meeting does not exist");
+                }
+                meeting = meetingList[meeting_topic];
             }
-            MeetingProposal meeting = meetingList[meeting_topic];
 
             //check if meeting is already closed
             if(meeting.open == false){
@@ -295,8 +303,10 @@ namespace server{
                     }
                 }
             }
-            foreach(KeyValuePair<string, MeetingProposal> key in meetingList){
-                Console.WriteLine(key.Value);
+            lock(meetingList){
+                foreach(KeyValuePair<string, MeetingProposal> key in meetingList){
+                    Console.WriteLine(key.Value);
+                }
             }
         }
 
@@ -353,10 +363,12 @@ namespace server{
         //ServerToServer addMeeting
         public void addMeeting(MeetingProposal meeting){
             //if already exists, replace
-            if(meetingList.ContainsKey(meeting.topic)){
-                meetingList.Remove(meeting.topic);
+            lock(meetingList){
+                if(meetingList.ContainsKey(meeting.topic)){
+                    meetingList.Remove(meeting.topic);
+                }
+                meetingList.Add(meeting.topic,meeting);
             }
-            meetingList.Add(meeting.topic,meeting);
 
             //send meeting info to clients
             foreach(KeyValuePair<string, ClientInfo> pair in clientList){
@@ -390,6 +402,22 @@ namespace server{
             return new ServerInfo(server_id,url,max_faults.ToString()
                 ,min_delay.ToString(),max_delay.ToString());
         }
+
+        //Async update meeting to other servers
+        delegate void UpdateServersDelegate(MeetingProposal meeting);
+
+        void updateServers(MeetingProposal meeting){
+            //FIXME sleep, wait for services
+            Thread.Sleep(200);
+            //update other servers
+            foreach(KeyValuePair<string, ServerInfo> pair in serverList){
+                IServerToServer server = (IServerToServer) Activator.GetObject(
+                    typeof(IServerToServer),
+                    pair.Value.url_to_server);
+                server.addMeeting(meeting);
+            }
+        }
+        
 
     }
 }

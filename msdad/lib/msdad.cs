@@ -37,7 +37,7 @@ namespace lib{
             if (obj == null || GetType() != obj.GetType()){
                 return false;
             } else if(this.location == ((Slot)obj).location &&
-                    this.date == ((Slot)obj).location){
+                    this.date == ((Slot)obj).date){
                 return true;
             } else{
                 return false;

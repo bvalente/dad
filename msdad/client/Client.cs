@@ -26,13 +26,18 @@ namespace client{
             this.server_url = server_url;
             this.script_file = script_file;
 			meetingList = new Dictionary<string, MeetingProposal>();
-			//TODO import meetings data?
             
             IServer server = (IServer) Activator.GetObject(
                 typeof(IServer), 
                 server_url);
             server.addClient(this.GetInfo());
-            executeScript(script_file);
+            //get meetings
+            ListDelegate del = new ListDelegate(server.getMeetings);
+            del.BeginInvoke(updateCallback,null);
+            
+            //execute script in new thread
+            Thread thread = new Thread(new ThreadStart(() => this.executeScript(script_file)));
+            thread.Start();
 
         }
 
@@ -248,6 +253,7 @@ namespace client{
             //will be called when delegate is over
             ListDelegate del = (ListDelegate)((AsyncResult)ar).AsyncDelegate;
             lock(meetingList){
+                //TODO update instead of replace
                 meetingList.Clear();
                 meetingList = del.EndInvoke(ar);
             }
