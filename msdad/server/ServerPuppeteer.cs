@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using lib;
+using Serilog;
 
 namespace server{
     //interface for the Puppet Master
@@ -32,7 +33,7 @@ namespace server{
         }
 
         public void kill(){
-            Console.WriteLine("Bye bye");
+            Log.Fatal("Bye bye");
             Environment.Exit(0);
         }
 

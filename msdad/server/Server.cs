@@ -50,7 +50,6 @@ namespace server{
             locationList = new Dictionary<string, Location>();
             //TODO load client/meetings database ?
 
-            Log.Debug("test1");
         }
 
         //Implementation of IServer interface methods        
@@ -283,32 +282,32 @@ namespace server{
         //ServerPuppeteer statusPuppeteer
         public void status(){
             //each server prints it's own server_id
-            Console.WriteLine(server_id);
+            Log.Information("Server id: " + server_id);
             
             //print freeze status
             if(freeze == true){
-                Console.WriteLine("Server is frozen"); //let it go
+                Log.Information("Server is frozen"); //let it go
             } else {
-                Console.WriteLine("Server is not frozen");
+                Log.Information("Server is not frozen");
             }
 
             //print clients
             foreach(KeyValuePair<string, ClientInfo> pair in clientList){
-                Console.WriteLine(pair.Key);
+                Log.Information(pair.Key);
             }
             //print rooms
             foreach(KeyValuePair<string,Location> pair in locationList){
-                Console.WriteLine(pair.Key);
+                Log.Information(pair.Key);
                 foreach(Room room in pair.Value.roomList){
-                    Console.WriteLine("\t" + room.room_name);
+                    Log.Information("\t" + room.room_name);
                     foreach(string date in room.usedDates){
-                        Console.WriteLine("\t\t" + date);
+                        Log.Information("\t\t" + date);
                     }
                 }
             }
             lock(meetingList){
                 foreach(KeyValuePair<string, MeetingProposal> key in meetingList){
-                    Console.WriteLine(key.Value);
+                    Log.Information(key.Value.ToString());
                 }
             }
         }
@@ -338,14 +337,12 @@ namespace server{
             else {
                 location = new Location(location_name);
                 locationList.Add(location_name, location);
-                //Debug
-                Console.WriteLine("Location added " + location_name);
+                Log.Debug("Location added " + location_name);
             }
             
             //create room
             Room room = location.addRoom(room_name, capacity);
-            //Debug
-            Console.WriteLine("Room added " + room.room_name);
+            Log.Debug("Room added " + room.room_name);
             
         }
 

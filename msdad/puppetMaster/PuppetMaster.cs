@@ -2,6 +2,7 @@ using lib;
 using System;
 using System.Threading;
 using System.Collections.Generic;
+using Serilog;
 
 namespace puppetMaster {
 
@@ -29,6 +30,15 @@ namespace puppetMaster {
             serverList = new Dictionary<string, ServerInfo>();
             //room list
             locationList = new Dictionary<string, Location>();
+            //Initialize debugger
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console()
+                .CreateLogger();
+            // Log.Information("");
+            // Log.Debug("");
+            // Log.Error("");
+
         }
 
         //singleton getter
@@ -76,15 +86,14 @@ namespace puppetMaster {
                         wait(cmds[1]);
                         break;
                     default:
-                        Console.WriteLine("invalid command: unrecognized " + cmds[0]);
+                        Log.Error("invalid command: unrecognized " + cmds[0]);
                         break;
                 }
             }catch(IndexOutOfRangeException ex){
-                Console.WriteLine("invalid command: not enough arguments");
-                Console.WriteLine(ex.Message);
+                Log.Error(ex, "invalid command: not enough arguments");
             }
             //Debug
-            Console.WriteLine(command);
+            Log.Debug(command);
         }
 
         public void createServer(string server_id, string server_url, string max_faults,
@@ -103,8 +112,7 @@ namespace puppetMaster {
                          max_faults, min_delay, max_delay);
             } catch(Exception ex){
                 //TODO catch PCS types of execeptions
-                Console.WriteLine("pcs connection failed");
-                Console.WriteLine(ex.Message);
+                Log.Error(ex,"pcs connection failed");
                 return;
             }
             
@@ -116,8 +124,7 @@ namespace puppetMaster {
                 Thread.Sleep(500); //TODO: make async
                 server.populate(locationList,serverList);
             } catch(Exception ex){
-                Console.WriteLine("connection to server failed");
-                Console.WriteLine(ex.Message);
+                Log.Error(ex, "connection to server failed");
             }
             
             //save server
@@ -140,8 +147,7 @@ namespace puppetMaster {
                                 script_file);
             } catch(Exception ex){
                 //TODO catch PCS types of execeptions
-                Console.WriteLine("pcs connection failed");
-                Console.WriteLine(ex.Message);
+                Log.Error(ex, "pcs connection failed");
                 return;
             }
 
@@ -183,7 +189,7 @@ namespace puppetMaster {
                 try{
                     server.statusPuppeteer();
                 } catch(Exception ex){
-                    Console.WriteLine(ex.Message);
+                    Log.Error(ex, "error while showing server status");
                 }        
             }
             //foreach clients
@@ -194,7 +200,8 @@ namespace puppetMaster {
                 try{
                     client.statusPuppeteer();
                 }catch(Exception ex){
-                    Console.WriteLine(ex.Message);
+                    Log.Error(ex, "error while showing client status");
+
                 }
             }
         }

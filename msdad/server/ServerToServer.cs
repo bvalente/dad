@@ -1,5 +1,6 @@
 using System;
 using lib;
+using Serilog;
 
 namespace server{
 		//interface for server to other servers
@@ -17,7 +18,7 @@ namespace server{
 
         public void addMeeting(MeetingProposal meeting){
             server.addMeeting(meeting);
-            Console.WriteLine("meeting " + meeting.topic + " added" );
+            Log.Debug("meeting " + meeting.topic + " added" );
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
 using System.Diagnostics;
+using Serilog;
 using lib;
 
 namespace client{
@@ -30,6 +31,15 @@ namespace client{
             TcpChannel channel = new TcpChannel(Int32.Parse(port));
             ChannelServices.RegisterChannel(channel, false); 
 
+            //Initialize debugger
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console()
+                .CreateLogger();
+            // Log.Information("");
+            // Log.Debug("");
+            // Log.Error("");
+
             //create client and puppeteer
             Client client = new Client(username, client_url, server_url, script_file);
             ClientPuppeteer puppeteer = new ClientPuppeteer(client);
@@ -47,9 +57,9 @@ namespace client{
 
             
             //DEBUG
-            Console.WriteLine("Client " + username +" created");
-            Console.WriteLine("service " + service); 
-            Console.WriteLine(client.username + " PID: " +
+            Log.Debug("Client " + username +" created");
+            Log.Debug("service " + service); 
+            Log.Debug(client.username + " PID: " +
                 Process.GetCurrentProcess().Id.ToString());
 
             //read input and execute commands

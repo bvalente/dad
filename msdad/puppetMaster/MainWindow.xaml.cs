@@ -2,16 +2,9 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Interactivity;
-using Avalonia.LogicalTree;
 using System;
-using System.Threading;
-using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels.Tcp;
 using System.Runtime.Remoting.Channels;
-using System.Net;
-using System.Net.Sockets;
-using System.Windows.Input;
-using System.Collections.Generic;
 using System.IO;
 using lib;
 

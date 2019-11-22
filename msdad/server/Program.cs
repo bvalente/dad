@@ -62,8 +62,7 @@ namespace server{
 
             
             //DEBUG
-            //Console.WriteLine("New server created");
-            Log.Debug("New server created");
+            Log.Debug("New server {server} created", server_id);
 
             //prevent process from closing
             System.Console.ReadLine();

@@ -4,6 +4,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using System.IO;
 using lib;
+using Serilog;
 
 namespace client{
 	
@@ -105,12 +106,11 @@ namespace client{
                         wait(cmds[1]);
                         break;
                     default:
-                        Console.WriteLine("invalid command: unrecognized " + cmds[0]);
+                        Log.Error("invalid command: unrecognized " + cmds[0]);
                         break;
                 }
             }catch(IndexOutOfRangeException ex){
-                Console.WriteLine("invalid command: not enough arguments");
-                Console.WriteLine(ex.Message);
+                Log.Error(ex, "invalid command: not enough arguments");
             }
         }
 
@@ -119,7 +119,7 @@ namespace client{
             //print meetings
             lock(meetingList){
                 foreach(KeyValuePair<string, MeetingProposal> key in meetingList){
-                    Console.WriteLine(key.Value);
+                    Log.Information(key.Value.ToString());
                 }
             }
             //async ask for update
@@ -164,11 +164,10 @@ namespace client{
             try{
                 server.createMeeting(meeting);
             } catch(MeetingException ex){
-                Console.WriteLine(ex.Message);
+                Log.Error(ex, "cannot create meeting");
                 return;
             }catch(Exception ex){
-                Console.WriteLine("connection with server failed");
-				Console.WriteLine(ex.Message);
+                Log.Error(ex, "connection with server failed");
                 return;
             }
 
@@ -198,7 +197,7 @@ namespace client{
             try{
                 server.joinClient(this.GetInfo(), meeting_topic, slotList);
             }catch(MeetingException ex){
-                Console.WriteLine(ex.Message);
+                Log.Error(ex, "cannot join client");
             }
 
  
@@ -213,7 +212,7 @@ namespace client{
             try{
                 server.closeMeeting(meeting_topic, this.GetInfo());
             } catch(MeetingException ex){
-                Console.WriteLine(ex.Message);
+                Log.Error(ex, "cannot close meeting");
             }
             //get meetings
             ListDelegate del = new ListDelegate(server.getMeetings);
@@ -238,10 +237,10 @@ namespace client{
         //ClientPuppeteer statusPuppeteer
         public void status(){
             //print name
-            Console.WriteLine(username);
+            Log.Information("username: {username}",username);
             //meetinglist
             foreach(KeyValuePair<string, MeetingProposal> key in meetingList){
-                Console.WriteLine(key.Value);
+                Log.Information(key.Value.ToString());
             }
         }
 
