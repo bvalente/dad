@@ -45,6 +45,9 @@ namespace lib{
 
         //print status
         void statusPuppeteer();
+
+        //reset program
+        void kill();
     }
 
     public class ClientException : Exception{

@@ -31,5 +31,10 @@ namespace client{
             client.status();
         }
 
+        
+        public void kill(){
+            Environment.Exit(0);
+        }
+
     }
 }

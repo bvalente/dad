@@ -248,5 +248,29 @@ namespace puppetMaster {
             Thread.Sleep(time);
         }
 
+        public void reset(){
+
+            //reset every server, each server resets all his clients
+            foreach(KeyValuePair<string, ServerInfo> pair in serverList){
+                IServerPuppeteer server = (IServerPuppeteer) Activator.GetObject(
+                    typeof(IServerPuppeteer),
+                    pair.Value.url_puppeteer);
+                Action action = new Action(server.kill);
+                action.BeginInvoke(null, null);
+                Log.Debug("killed server {server}", pair.Value.server_id);
+            }
+            serverList.Clear();
+            
+            //reset clients
+            foreach(KeyValuePair<string, ClientInfo> pair in clientList){
+                IClientPuppeteer client = (IClientPuppeteer) Activator.GetObject(
+                    typeof(IClientPuppeteer),
+                    pair.Value.client_url_puppeteer);
+                Action action = new Action(client.kill);
+                action.BeginInvoke(null, null);
+                Log.Debug("killed client {client}", pair.Value.username);
+            }
+            clientList.Clear();
+        }
     }
 }

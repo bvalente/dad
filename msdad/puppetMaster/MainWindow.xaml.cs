@@ -204,6 +204,17 @@ namespace puppetMaster{
             puppetMaster.wait(time);
         }
 
+        //reset everything
+        public void reset(object sender, RoutedEventArgs e){
+
+            //reset puppetMaster
+            puppetMaster.reset();
+
+            //reset UI
+            clientPanel.Children.Clear();
+            serverPanel.Children.Clear();
+        }
+
         //update client list
         public void addClient(ClientInfo client){
             TextBlock block = new TextBlock();

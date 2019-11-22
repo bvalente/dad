@@ -122,6 +122,11 @@
                         Click="waitTime"/>
             </StackPanel>
 
+            <StackPanel Name="ResetPanel" Orientation="Horizontal">
+                <Button Name="ResetButton" Content="Reset all"
+                        Click="reset"/>
+            </StackPanel>
+
         </StackPanel>
 
     </StackPanel>

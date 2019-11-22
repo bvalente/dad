@@ -11,3 +11,6 @@
 #IDE files
 *.suo
 *.user
+
+#other files
+desktop.ini
