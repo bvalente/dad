@@ -66,7 +66,7 @@ namespace client{
             string input = System.Console.ReadLine();
             while (input != "exit"){
                 client.executeCommand(input);
-                System.Console.ReadLine();
+                input = System.Console.ReadLine();
             }
         }
     }
