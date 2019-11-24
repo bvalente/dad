@@ -105,20 +105,10 @@ namespace server{
                 meetingList.Add(meeting.topic,meeting);
             }
 
-            //TODO async
-            //send meeting to other servers
-            /*
-            foreach(KeyValuePair<string, ServerInfo> pair in serverList){
-                IServerToServer server = (IServerToServer) Activator.GetObject(
-                    typeof(IServerToServer),
-                    pair.Value.url_to_server);
-                
-                server.addMeeting(meeting);
-            }
-            */
-            //Async
+            //Async send meeting to other servers
             UpdateServersDelegate del = new UpdateServersDelegate(this.updateServers);
             del.BeginInvoke(meeting,null,null);
+            //TODO callback function?
 
         }
 
@@ -179,13 +169,11 @@ namespace server{
                         " can not participate in " + meeting_topic);
             }
 
-            //update other servers
-            foreach(KeyValuePair<string, ServerInfo> pair in serverList){
-                IServerToServer server = (IServerToServer) Activator.GetObject(
-                    typeof(IServerToServer),
-                    pair.Value.url_to_server);
-                server.addMeeting(meeting);
-            }
+            //Async send meeting to other servers
+            UpdateServersDelegate del = new UpdateServersDelegate(this.updateServers);
+            del.BeginInvoke(meeting,null,null);
+            //TODO callback function?
+
         }
 
         //IServer.closeMeeting
@@ -266,13 +254,11 @@ namespace server{
             //if everythinh ok, books the meeting
             meeting.close(room, date);
 
-            //update other servers
-            foreach(KeyValuePair<string, ServerInfo> pair in serverList){
-                IServerToServer server = (IServerToServer) Activator.GetObject(
-                    typeof(IServerToServer),
-                    pair.Value.url_to_server);
-                server.addMeeting(meeting);
-            }
+            //Async send meeting to other servers
+            UpdateServersDelegate del = new UpdateServersDelegate(this.updateServers);
+            del.BeginInvoke(meeting,null,null);
+            //TODO callback function?
+
         }
 
         //End of IServer implementation
