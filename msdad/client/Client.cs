@@ -53,13 +53,8 @@ namespace client{
         //IClient.sendMeeting
         //receive meeting from server and save it
         public void sendMeeting(MeetingProposal meeting){
-            lock(meetingList){
-                //if already exists, replace
-                if(meetingList.ContainsKey(meeting.topic)){
-                    meetingList.Remove(meeting.topic);
-                }
-                meetingList.Add(meeting.topic,meeting);
-            }
+            
+            this.addMeeting(meeting);
         }
 
         //End of IClient implementation
@@ -195,12 +190,11 @@ namespace client{
 
             //try to join meeting
             try{
-                server.joinClient(this.GetInfo(), meeting_topic, slotList);
+                MeetingProposal meeting = server.joinClient(this.GetInfo(), meeting_topic, slotList);
+                this.addMeeting(meeting);
             }catch(MeetingException ex){
                 Log.Error(ex, "cannot join client");
             }
-
- 
         }
 
         //Closes a meeting
@@ -210,13 +204,11 @@ namespace client{
                 server_url);
             //try to close meeting
             try{
-                server.closeMeeting(meeting_topic, this.GetInfo());
+                MeetingProposal meeting = server.closeMeeting(meeting_topic, this.GetInfo());
+                this.addMeeting(meeting);
             } catch(MeetingException ex){
                 Log.Error(ex, "cannot close meeting");
             }
-            //get meetings
-            ListDelegate del = new ListDelegate(server.getMeetings);
-            del.BeginInvoke(updateCallback,null);
             
         }
 
@@ -232,6 +224,19 @@ namespace client{
 
         ClientInfo GetInfo(){
             return new ClientInfo(username, client_url, server_url, script_file);
+        }
+
+        //add meeting to this client
+        private void addMeeting(MeetingProposal meeting){
+            lock(meetingList){
+                if(meetingList.ContainsKey(meeting.topic)){
+                    //replace meeting
+                    meetingList[meeting.topic] = meeting;
+                } else {
+                    //add new dictionary entry
+                    meetingList.Add(meeting.topic, meeting);
+                }
+            }
         }
         
         //ClientPuppeteer statusPuppeteer

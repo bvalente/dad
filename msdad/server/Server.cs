@@ -79,26 +79,24 @@ namespace server{
 
             //if clientList is empty, send to all clients
             List<ClientInfo> senders = new List<ClientInfo>();
+            //remove coordinator
+            //TODO lock?
+            Dictionary<string, ClientInfo> newdic = new Dictionary<string, ClientInfo>(clientList);
+            newdic.Remove(meeting.coordinator);
             if(meeting.invitees.Count == 0){
-                senders = new List<ClientInfo>( clientList.Values);
+                senders = new List<ClientInfo>( newdic.Values);
             } else{
                 foreach(String invitee in meeting.invitees){
                     //only send meeting if the server knows the invitee
-                    if(clientList.ContainsKey(invitee)){
-                        senders.Add(clientList[invitee]);
+                    if(newdic.ContainsKey(invitee)){
+                        senders.Add(newdic[invitee]);
                     }
                 }
             }
 
-            //send to every client except the coordinator
-            foreach(ClientInfo clientInfo in senders){
-                if(clientInfo.username != meeting.coordinator){ //jumps cordinator and only sends to other clients
-                    IClient client = (IClient) Activator.GetObject(
-                        typeof(IClient),
-                        clientInfo.client_url);
-                    client.sendMeeting(meeting);
-                }
-            }
+            //Async send meeting info to clients
+            UpdateClientsDelegate clientDel = new UpdateClientsDelegate(updateClients);
+            clientDel.BeginInvoke(meeting, senders, null, null);
 
             //add meeting to list
             lock(meetingList){
@@ -106,8 +104,8 @@ namespace server{
             }
 
             //Async send meeting to other servers
-            UpdateServersDelegate del = new UpdateServersDelegate(this.updateServers);
-            del.BeginInvoke(meeting,null,null);
+            UpdateServersDelegate serverDel = new UpdateServersDelegate(this.updateServers);
+            serverDel.BeginInvoke(meeting,null,null);
             //TODO callback function?
 
         }
@@ -140,7 +138,7 @@ namespace server{
         }
 
         //IServer.joinClient
-        public void joinClient(ClientInfo client, string meeting_topic, List<Slot> slotList){
+        public MeetingProposal joinClient(ClientInfo client, string meeting_topic, List<Slot> slotList){
             //slotList e a lista de disponibilidade do cliente
             
             //procurar meeting list, ver se existe
@@ -170,14 +168,21 @@ namespace server{
             }
 
             //Async send meeting to other servers
-            UpdateServersDelegate del = new UpdateServersDelegate(this.updateServers);
-            del.BeginInvoke(meeting,null,null);
+            UpdateServersDelegate serverDel = new UpdateServersDelegate(this.updateServers);
+            serverDel.BeginInvoke(meeting,null,null);
             //TODO callback function?
 
+            //Async send to other clients
+            Dictionary<string, ClientInfo> newdic = new Dictionary<string, ClientInfo>(clientList);
+            newdic.Remove(client.username);
+            UpdateClientsDelegate clientDel = new UpdateClientsDelegate(this.updateClients);
+            clientDel.BeginInvoke(meeting,new List<ClientInfo>(newdic.Values), null, null);
+
+            return meeting;
         }
 
         //IServer.closeMeeting
-        public void closeMeeting(string meeting_topic, ClientInfo clientInfo){
+        public MeetingProposal closeMeeting(string meeting_topic, ClientInfo clientInfo){
 
             //procurar meeting list, ver se existe
             MeetingProposal meeting;
@@ -199,15 +204,15 @@ namespace server{
             //ver se tem numero de participantes necessario
             if(meeting.participants.Count < meeting.minParticipants){
                 throw new MeetingException("Not enough participants");
+                //TODO cancel meeting
             }
 
             //check if there is available room at x date
-            //ainda nao tem room
             //procurar uma room na location certa, ver se tem espaco
-            //for participant, 
             List<Participant> participants = meeting.participants;
             List<Participant> participant_recursive = new List<Participant>(participants);
             participant_recursive.RemoveAt(0); //remove first element
+
             List<Slot> possibleSlots = new List<Slot>();
             foreach(Slot slot in participants[0].slotList){
                 Slot slot2 = findSlot(participant_recursive, slot);
@@ -219,10 +224,8 @@ namespace server{
             if(possibleSlots.Count == 0){
                 throw new MeetingException("Nao ha slot possivel");
             }
-            //depois de encontrar os slots em comum
 
-            //temos de encontrar uma sala com espaco
-            //TODO:
+            //depois de encontrar os slots em comum temos de encontrar uma sala com espaco
             Room room = null;
             string date = null;
             foreach(Slot slot in possibleSlots){
@@ -255,9 +258,20 @@ namespace server{
             meeting.close(room, date);
 
             //Async send meeting to other servers
-            UpdateServersDelegate del = new UpdateServersDelegate(this.updateServers);
-            del.BeginInvoke(meeting,null,null);
+            UpdateServersDelegate serverDel = new UpdateServersDelegate(this.updateServers);
+            serverDel.BeginInvoke(meeting,null,null);
             //TODO callback function?
+
+            //TODO update locations to servers beacause of used Dates in rooms
+
+            //TODO send only to invited clients??
+            //Async send to other clients
+            Dictionary<string, ClientInfo> newdic = new Dictionary<string, ClientInfo>(clientList);
+            newdic.Remove(clientInfo.username);
+            UpdateClientsDelegate clientDel = new UpdateClientsDelegate(this.updateClients);
+            clientDel.BeginInvoke(meeting,new List<ClientInfo>(newdic.Values), null, null);
+
+            return meeting;
 
         }
 
@@ -356,13 +370,9 @@ namespace server{
                 meetingList.Add(meeting.topic,meeting);
             }
 
-            //send meeting info to clients
-            foreach(KeyValuePair<string, ClientInfo> pair in clientList){
-                IClient client = (IClient) Activator.GetObject(
-                    typeof(IClient),
-                    pair.Value.client_url);
-                client.sendMeeting(meeting);
-            }
+            //Async send meeting info to clients
+            UpdateClientsDelegate del = new UpdateClientsDelegate(updateClients);
+            del.BeginInvoke(meeting, new List<ClientInfo>(clientList.Values), null, null);
         }
 
         //End of other interfaces methods
@@ -401,6 +411,19 @@ namespace server{
                     typeof(IServerToServer),
                     pair.Value.url_to_server);
                 server.addMeeting(meeting);
+            }
+        }
+
+        //Async send meeting to client
+        delegate void UpdateClientsDelegate(MeetingProposal meeting, List<ClientInfo> clients);
+
+        void updateClients(MeetingProposal meeting, List<ClientInfo> clients){
+            //TODO send only to invited clients??
+            foreach(ClientInfo clientInfo in clients){
+                IClient client = (IClient) Activator.GetObject(
+                    typeof(IClient),
+                    clientInfo.client_url);
+                client.sendMeeting(meeting);
             }
         }
         

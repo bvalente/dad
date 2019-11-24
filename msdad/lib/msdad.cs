@@ -67,6 +67,10 @@ namespace lib{
             this.room_name = room_name;
             this.usedDates = new List<string>();
         }
+
+        public void book(string date){
+            usedDates.Add(date);
+        }
     }
 
     [Serializable]
@@ -135,6 +139,7 @@ namespace lib{
             this.open = false;
             this.room = room;
             this.date = date;
+            room.book(date);
         }
     }
 

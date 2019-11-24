@@ -46,10 +46,10 @@ namespace lib{
         Dictionary<string,MeetingProposal> getMeetings();
 
         //join client
-        void joinClient(ClientInfo client, string meeting_topic, List<Slot> slotList);
+        MeetingProposal joinClient(ClientInfo client, string meeting_topic, List<Slot> slotList);
 
         //closes meeting
-        void closeMeeting(string meeting_topic, ClientInfo clientInfo);
+        MeetingProposal closeMeeting(string meeting_topic, ClientInfo clientInfo);
 
     }
 
