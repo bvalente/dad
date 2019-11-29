@@ -18,6 +18,9 @@ namespace client{
                 
         //meetings database
         Dictionary<string,MeetingProposal> meetingList;
+
+        //backup servers
+        Dictionary<string, ServerInfo> backupServers;
         
         //constructor
         public Client(string username, string client_url, string server_url, string script_file){
@@ -31,7 +34,7 @@ namespace client{
             IServer server = (IServer) Activator.GetObject(
                 typeof(IServer), 
                 server_url);
-            server.addClient(this.GetInfo());
+            backupServers = server.addClient(this.GetInfo());
             //get meetings
             ListDelegate del = new ListDelegate(server.getMeetings);
             del.BeginInvoke(updateCallback,null);
@@ -163,6 +166,8 @@ namespace client{
                 return;
             }catch(Exception ex){
                 Log.Error(ex, "connection with server failed");
+                Action action = new Action( () => create(args));
+                getNewServer(action);
                 return;
             }
 
@@ -194,6 +199,12 @@ namespace client{
                 this.addMeeting(meeting);
             }catch(MeetingException ex){
                 Log.Error(ex, "cannot join client");
+                return;
+            }catch(Exception ex){
+                Log.Error(ex, "cannot connect to server");
+                Action action = new Action( () => join(args));
+                getNewServer(action);
+                return;
             }
         }
 
@@ -208,6 +219,12 @@ namespace client{
                 this.addMeeting(meeting);
             } catch(MeetingException ex){
                 Log.Error(ex, "cannot close meeting");
+                return;
+            } catch(Exception ex){
+                Log.Error(ex, "cannot connect to server");
+                Action action = new Action( () => close(meeting_topic));
+                getNewServer(action);
+                return;
             }
             
         }
@@ -247,6 +264,31 @@ namespace client{
             foreach(KeyValuePair<string, MeetingProposal> key in meetingList){
                 Log.Information(key.Value.ToString());
             }
+        }
+
+        public void getNewServer(Action method){
+            //get random server
+            if(backupServers.Count == 0){
+                Log.Error("there are no server backups");
+                return;
+            }
+            Random rand = new Random();
+            List<ServerInfo> servers = new List<ServerInfo>(backupServers.Values);
+            ServerInfo info = servers[rand.Next(0,servers.Count)];
+            backupServers.Remove(info.server_id);
+            //connect to new server
+            IServer newServer = (IServer) Activator.GetObject(
+                typeof(IServer),
+                info.url);
+            try{
+                newServer.addClient(this.GetInfo());
+            } catch (Exception ex){
+                //server failed, try new server
+                Log.Error(ex, "error connecting to server");
+                getNewServer(method);
+            }
+            this.server_url = info.url;
+            method();
         }
 
         //update meetings async

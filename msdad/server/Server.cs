@@ -111,12 +111,12 @@ namespace server{
         }
 
         //IServer.addClient
-        public void addClient(ClientInfo clientInfo){
+        public Dictionary<string, ServerInfo> addClient(ClientInfo clientInfo){
             //check if server is frozen
             if(this.freeze == true){
                 Action action = new Action( () => this.addClient(clientInfo));
                 actionList.Add(action);
-                return;
+                return serverList;
             }
 
             //check if there is a client with the same name
@@ -129,7 +129,7 @@ namespace server{
 
             //client is responsible for fetching meetings
 
-            //TODO send client info to other servers?
+            return serverList;
         }
 
         //IServer.getMeetings

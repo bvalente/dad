@@ -40,7 +40,7 @@ namespace lib{
         void createMeeting(MeetingProposal meeting);
 
         //add client
-        void addClient(ClientInfo client);
+        Dictionary<string, ServerInfo> addClient(ClientInfo client);
 
         //returns all meetings
         Dictionary<string,MeetingProposal> getMeetings();
