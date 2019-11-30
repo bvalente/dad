@@ -68,6 +68,13 @@ namespace lib{
             this.usedDates = new List<string>();
         }
 
+        public Room(Room room){
+            this.location = room.location;
+            this.capacity = room.capacity;
+            this.room_name = String.Copy(room.room_name);
+            this.usedDates = new List<string>(usedDates);
+        }
+
         public void book(string date){
             usedDates.Add(date);
         }
@@ -95,6 +102,7 @@ namespace lib{
         public bool open;
         public Room room;
         public string date;
+        public int version;
 
         public MeetingProposal(string coordinator, string topic, int minParticipants,
                         List<Slot> slotList , List<string> invitees){
@@ -105,6 +113,20 @@ namespace lib{
             this.invitees = invitees;
             this.participants = new List<Participant>();
             this.open = true;
+            this.version = 1;
+        }
+
+        public MeetingProposal(MeetingProposal meeting){
+            this.coordinator = String.Copy(meeting.coordinator);
+            this.topic = String.Copy(meeting.topic);
+            this.minParticipants = meeting.minParticipants;
+            this.slotList = new List<Slot>(meeting.slotList);
+            this.invitees = new List<string>(meeting.invitees);
+            this.participants = new List<Participant>(meeting.participants);
+            this.open = meeting.open;
+            this.room = new Room(meeting.room);
+            this.date = String.Copy(meeting.date);
+            this.version = meeting.version;
         }
 
         public override string ToString(){
@@ -135,11 +157,21 @@ namespace lib{
             return text;
         }
 
+        public void join(Participant p){
+            this.participants.Add(p);
+            this.updateVersion();
+        }
+
         public void close(Room room, string date){
             this.open = false;
             this.room = room;
             this.date = date;
-            room.book(date);
+            room.book(date); //TODO problem
+            this.updateVersion();
+        }
+
+        public void updateVersion(){
+            this.version += 1;
         }
     }
 

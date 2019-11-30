@@ -29,7 +29,9 @@ namespace server{
         Dictionary<string, ServerInfo> serverList;
 
         //meetings database
-        Dictionary<string,MeetingProposal> meetingList;
+        public Dictionary<string,MeetingProposal> meetingList;
+        public Dictionary<string,MeetingProposal> blockedMeetings;
+        AutoResetEvent meetingLock;
 
         //room list
         public Dictionary<string,Location> locationList;
@@ -46,8 +48,10 @@ namespace server{
             clientList = new Dictionary<string, ClientInfo>();
             serverList = new Dictionary<string, ServerInfo>();
 			meetingList = new Dictionary<string,MeetingProposal>();
+            blockedMeetings = new Dictionary<string, MeetingProposal>();
             actionList = new List<Action>();
             locationList = new Dictionary<string, Location>();
+            meetingLock = new AutoResetEvent(false);
             //TODO load client/meetings database ?
 
         }
@@ -160,7 +164,7 @@ namespace server{
             if(meeting.invitees.Count == 0 ||
                     meeting.invitees.Contains(client.username)){
                 //client can join
-                meeting.participants.Add(new Participant(client, slotList));
+                meeting.join(new Participant(client, slotList));
             } else {
                 
                 throw new MeetingException("client " + client.username + 
@@ -398,6 +402,45 @@ namespace server{
             return new ServerInfo(server_id,url,max_faults.ToString()
                 ,min_delay.ToString(),max_delay.ToString());
         }
+
+        //Async send meeting to server
+        delegate void SendMeetingDelegate(ServerInfo serverInfo, MeetingProposal meeting, ref int consensus);
+
+        void sendMeeting(ServerInfo serverInfo, MeetingProposal meeting, ref int consensus){
+
+            IServerToServer server = (ServerToServer) Activator.GetObject(
+                typeof(ServerInfo),
+                serverInfo.url_to_server);
+            bool join = server.sendMeeting(meeting);
+            if (join){
+                if( Interlocked.Decrement(ref consensus) == 0){
+                    meetingLock.Set();
+                }
+            }
+        }
+
+        //Async write the meeting
+        delegate void WriteMeetingDelegate(ServerInfo serverInfo, MeetingProposal meeting);
+
+        void writeMeeting(ServerInfo serverInfo, MeetingProposal meeting){
+
+            IServerToServer server = (ServerToServer) Activator.GetObject(
+                typeof(ServerInfo),
+                serverInfo.url_to_server);
+            server.writeMeeting(meeting);
+
+        }
+
+        delegate void DONTwriteMeetingDelegate(ServerInfo serverInfo, MeetingProposal meeting);
+
+        void DONTwriteMeeting(ServerInfo serverInfo, MeetingProposal meeting){
+            IServerToServer server = (ServerToServer) Activator.GetObject(
+                typeof(ServerInfo),
+                serverInfo.url_to_server);
+            server.DONTwriteMeeting(meeting);
+            
+        }
+
 
         //Async update meeting to other servers
         delegate void UpdateServersDelegate(MeetingProposal meeting);

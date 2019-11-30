@@ -56,6 +56,15 @@ namespace lib{
     //interface for other servers
     public interface IServerToServer{
 
+        //send meeting to server, but doesnt write it
+        bool sendMeeting(MeetingProposal meeting);
+
+        //write previously sent meeting
+        void writeMeeting(MeetingProposal meeting);
+
+        //DONT write previously sent meeting
+        void DONTwriteMeeting(MeetingProposal meeting);
+
         //send this server info to other servers
         void addNewServer(ServerInfo server);
 
