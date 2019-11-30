@@ -128,11 +128,16 @@ namespace puppetMaster{
             string cPath = AppDomain.CurrentDomain.BaseDirectory;
             string filePath = Path.Combine(cPath,
                  "../../../../scripts/" + fileName);
-            string[] commands = System.IO.File.ReadAllLines(filePath);
+            try{
+                string[] commands = System.IO.File.ReadAllLines(filePath);
 
-            //execute puppetMaster.executeCommand n times
-            foreach (string command in commands){
-                puppetMaster.executeCommand(command);
+                //execute puppetMaster.executeCommand n times
+                foreach (string command in commands){
+                    puppetMaster.executeCommand(command);
+                }
+            }catch(Exception ex){
+                Console.WriteLine("cannot open file " + fileName);
+                Console.WriteLine(ex.Message);
             }
         }
 
