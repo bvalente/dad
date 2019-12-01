@@ -23,10 +23,10 @@ namespace server{
         List<Action> actionList;
 
         //client database
-        Dictionary<string, ClientInfo> clientList;
+        public Dictionary<string, ClientInfo> clientList;
 
         //save other servers
-        Dictionary<string, ServerInfo> serverList;
+        public Dictionary<string, ServerInfo> serverList;
 
         //meetings database
         public Dictionary<string,MeetingProposal> meetingList;
@@ -172,9 +172,28 @@ namespace server{
             }
 
             //Async send meeting to other servers
-            UpdateServersDelegate serverDel = new UpdateServersDelegate(this.updateServers);
-            serverDel.BeginInvoke(meeting,null,null);
-            //TODO callback function?
+            //TODO, make copy of meeting
+            int consensus = serverList.Count - max_faults;//wait for X servers
+            Log.Debug("consensus {c}", consensus);
+            if(consensus > 0 ){
+                foreach(KeyValuePair<string,ServerInfo> pair in serverList){
+                    SendMeetingDelegate meetingDel = new SendMeetingDelegate(this.sendMeeting);
+                    meetingDel.BeginInvoke(pair.Value, meeting, ref consensus, null, null);
+                }
+                if(meetingLock.WaitOne(10000)){//have timeout
+                    Log.Debug("Got {consensus} consensus", consensus);
+                    foreach (KeyValuePair<string,ServerInfo> pair in serverList){
+                        WriteMeetingDelegate writeDel = new WriteMeetingDelegate(this.writeMeeting);
+                        writeDel.BeginInvoke(pair.Value, meeting, null, null);
+                    }
+                }else{
+                    Log.Error("could not get consensus");
+                    foreach (KeyValuePair<string,ServerInfo> pair in serverList){
+                        DONTwriteMeetingDelegate deleteDel = new DONTwriteMeetingDelegate(this.DONTwriteMeeting);
+                        deleteDel.BeginInvoke(pair.Value, meeting, null, null);
+                    }
+                }
+            }
 
             //Async send to other clients
             Dictionary<string, ClientInfo> newdic = new Dictionary<string, ClientInfo>(clientList);
@@ -240,10 +259,10 @@ namespace server{
                 Location location = locationList[slot.location];
                 string date2 = slot.date;
                 //procurar room na location com date disponivel
-                foreach(Room room2 in location.roomList){
-                    if ( ! room2.usedDates.Contains(date2) &&
-                            room2.capacity >= meeting.participants.Count){
-                        room = room2;
+                foreach(KeyValuePair<string,Room> pair in location.roomList){
+                    if ( ! pair.Value.usedDates.Contains(date2) &&
+                            pair.Value.capacity >= meeting.participants.Count){
+                        room = pair.Value;
                         date = date2;
                         break;
                     }
@@ -302,9 +321,9 @@ namespace server{
             //print rooms
             foreach(KeyValuePair<string,Location> pair in locationList){
                 Log.Information(pair.Key);
-                foreach(Room room in pair.Value.roomList){
-                    Log.Information("\t" + room.room_name);
-                    foreach(string date in room.usedDates){
+                foreach(KeyValuePair<string,Room> pair2 in pair.Value.roomList){
+                    Log.Information("\t" + pair2.Value.room_name);
+                    foreach(string date in pair2.Value.usedDates){
                         Log.Information("\t\t" + date);
                     }
                 }
@@ -407,15 +426,24 @@ namespace server{
         delegate void SendMeetingDelegate(ServerInfo serverInfo, MeetingProposal meeting, ref int consensus);
 
         void sendMeeting(ServerInfo serverInfo, MeetingProposal meeting, ref int consensus){
-
-            IServerToServer server = (ServerToServer) Activator.GetObject(
-                typeof(ServerInfo),
+            Log.Debug("sending {meeting} to {server}", meeting.topic, serverInfo.server_id);
+            IServerToServer server = (IServerToServer) Activator.GetObject(
+                typeof(IServerToServer),
                 serverInfo.url_to_server);
-            bool join = server.sendMeeting(meeting);
+            bool join = false;
+            try{
+                join = server.sendMeeting(meeting);
+            } catch (Exception ex){
+                Log.Error(ex, "cannot send meeting");
+                join = false;
+            }
             if (join){
+                Log.Debug("{server} accepted {meeting}", serverInfo.server_id, meeting.topic);
                 if( Interlocked.Decrement(ref consensus) == 0){
                     meetingLock.Set();
                 }
+            }else{
+                Log.Debug("{server} did not accept {meeting}", serverInfo.server_id, meeting.topic);
             }
         }
 
@@ -424,8 +452,8 @@ namespace server{
 
         void writeMeeting(ServerInfo serverInfo, MeetingProposal meeting){
 
-            IServerToServer server = (ServerToServer) Activator.GetObject(
-                typeof(ServerInfo),
+            IServerToServer server = (IServerToServer) Activator.GetObject(
+                typeof(IServerToServer),
                 serverInfo.url_to_server);
             server.writeMeeting(meeting);
 
@@ -434,8 +462,8 @@ namespace server{
         delegate void DONTwriteMeetingDelegate(ServerInfo serverInfo, MeetingProposal meeting);
 
         void DONTwriteMeeting(ServerInfo serverInfo, MeetingProposal meeting){
-            IServerToServer server = (ServerToServer) Activator.GetObject(
-                typeof(ServerInfo),
+            IServerToServer server = (IServerToServer) Activator.GetObject(
+                typeof(IServerToServer),
                 serverInfo.url_to_server);
             server.DONTwriteMeeting(meeting);
             
@@ -458,9 +486,9 @@ namespace server{
         }
 
         //Async send meeting to client
-        delegate void UpdateClientsDelegate(MeetingProposal meeting, List<ClientInfo> clients);
+        public delegate void UpdateClientsDelegate(MeetingProposal meeting, List<ClientInfo> clients);
 
-        void updateClients(MeetingProposal meeting, List<ClientInfo> clients){
+        public void updateClients(MeetingProposal meeting, List<ClientInfo> clients){
             //TODO send only to invited clients??
             foreach(ClientInfo clientInfo in clients){
                 IClient client = (IClient) Activator.GetObject(

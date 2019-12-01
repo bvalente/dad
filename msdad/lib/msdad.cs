@@ -7,16 +7,16 @@ namespace lib{
     [Serializable]
     public class Location{
         public string location_name;
-        public List<Room> roomList;
+        public Dictionary<string,Room> roomList;
 
         public Location(string location_name){
             this.location_name = location_name;
-            roomList = new List<Room>();
+            roomList = new Dictionary<string, Room>();
         }
 
         public Room addRoom(string room_name, int capacity){
             Room room = new Room(this, capacity, room_name);
-            roomList.Add(room);
+            roomList.Add(room.room_name, room);
             return room;
         }
     }
@@ -133,6 +133,7 @@ namespace lib{
 
             string text = "";
             text += "Topic: " + topic + "\n";
+            text += "Version: " + version.ToString() + "\n";
             text += "Coordinator: " + coordinator + "\n";
             text += "Minimum Participants: " + minParticipants.ToString() + "\n";
             

@@ -271,6 +271,9 @@ namespace puppetMaster {
                 Log.Debug("killed client {client}", pair.Value.username);
             }
             clientList.Clear();
+
+            //reset locations
+            locationList.Clear();
         }
     }
 }

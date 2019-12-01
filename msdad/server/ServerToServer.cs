@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using lib;
 using Serilog;
 
@@ -14,6 +15,7 @@ namespace server{
 
         //get meeting
         public bool sendMeeting(MeetingProposal meeting){
+            Log.Debug("received meeting {topic} version {v}", meeting.topic, meeting.version);
             //check version here?
             if (server.meetingList.ContainsKey(meeting.topic)){
                 //server has meeting, check version and if meeting is blocked
@@ -30,15 +32,19 @@ namespace server{
 
         //write meeting
         public void writeMeeting(MeetingProposal meeting){
+            Log.Debug("write meeting {topic} version {v}", meeting.topic, meeting.version);
             server.meetingList.Remove(meeting.topic);
             server.meetingList.Add(meeting.topic, meeting);
             server.blockedMeetings.Remove(meeting.topic);
             //update location's room
             if(meeting.room != null){
                 Location location = meeting.room.location;
-                location.roomList.Remove(meeting.room);
-                location.roomList.Add(meeting.room);
+                location.roomList.Remove(meeting.room.room_name);
+                location.roomList.Add(meeting.room.room_name, meeting.room);
             }
+            //Async send meeting info to clients
+            Server.UpdateClientsDelegate del = new Server.UpdateClientsDelegate(server.updateClients);
+            del.BeginInvoke(meeting, new List<ClientInfo>(server.clientList.Values), null, null);
         }
 
         public void DONTwriteMeeting(MeetingProposal meeting){
