@@ -14,8 +14,8 @@ namespace server{
             this.server = server;
         }
 
-        public string ping(){
-            return "Server Puppeteer is online";
+        public bool ping(){
+            return true;
         }
         
         public void statusPuppeteer(){

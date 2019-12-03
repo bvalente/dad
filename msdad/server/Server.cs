@@ -59,8 +59,8 @@ namespace server{
         //Implementation of IServer interface methods        
 
         //IServer.ping
-        public string ping(){
-            return "server is online";
+        public bool ping(){
+            return true;
         }
 
         //IServer.createMeeting
@@ -73,6 +73,7 @@ namespace server{
                 actionList.Add(action);
                 return;
             }
+            this.randomSleep();
 
             //see if locations are valid
             foreach(Slot slot in meeting.slotList){
@@ -122,6 +123,7 @@ namespace server{
                 actionList.Add(action);
                 return serverList;
             }
+            this.randomSleep();
 
             //check if there is a client with the same name
             if (clientList.ContainsKey(clientInfo.username)){
@@ -138,12 +140,23 @@ namespace server{
 
         //IServer.getMeetings
         public Dictionary<string,MeetingProposal> getMeetings(){
+            this.randomSleep();
             return this.meetingList;
         }
 
         //IServer.joinClient
         public MeetingProposal joinClient(ClientInfo client, string meeting_topic, List<Slot> slotList){
+            return joinClient(client, meeting_topic, slotList, false);
+        }
+        public MeetingProposal joinClient(ClientInfo client, string meeting_topic, List<Slot> slotList, bool frozen){
             //slotList e a lista de disponibilidade do cliente
+            //check if server is frozen
+            if(this.freeze == true){
+                Action action = new Action( () => this.joinClient(client, meeting_topic, slotList, true));
+                actionList.Add(action);
+                return null;
+            }
+            this.randomSleep();
             
             //procurar meeting list, ver se existe
             MeetingProposal meeting;
@@ -173,7 +186,7 @@ namespace server{
 
             //Async send meeting to other servers
             //TODO, make copy of meeting
-            int consensus = serverList.Count - max_faults;//wait for X servers
+            int consensus = getConsensus();//wait for X servers
             Log.Debug("consensus {c}", consensus);
             if(consensus > 0 ){
                 foreach(KeyValuePair<string,ServerInfo> pair in serverList){
@@ -201,11 +214,25 @@ namespace server{
             UpdateClientsDelegate clientDel = new UpdateClientsDelegate(this.updateClients);
             clientDel.BeginInvoke(meeting,new List<ClientInfo>(newdic.Values), null, null);
 
+            if (frozen){
+                IClient clientSocket = (IClient) Activator.GetObject(typeof(IClient), client.client_url);
+                clientSocket.sendMeeting(meeting);
+            }
             return meeting;
         }
 
         //IServer.closeMeeting
         public MeetingProposal closeMeeting(string meeting_topic, ClientInfo clientInfo){
+            return closeMeeting(meeting_topic, clientInfo, false);
+        }
+        public MeetingProposal closeMeeting(string meeting_topic, ClientInfo clientInfo, bool frozen){
+            //check if server is frozen
+            if(this.freeze == true){
+                Action action = new Action( () => this.closeMeeting(meeting_topic, clientInfo, true));
+                actionList.Add(action);
+                return null;
+            }
+            this.randomSleep();
 
             //procurar meeting list, ver se existe
             MeetingProposal meeting;
@@ -294,6 +321,10 @@ namespace server{
             UpdateClientsDelegate clientDel = new UpdateClientsDelegate(this.updateClients);
             clientDel.BeginInvoke(meeting,new List<ClientInfo>(newdic.Values), null, null);
 
+            if (frozen){
+                IClient clientSocket = (IClient) Activator.GetObject(typeof(IClient), clientInfo.client_url);
+                clientSocket.sendMeeting(meeting);
+            }
             return meeting;
 
         }
@@ -420,6 +451,52 @@ namespace server{
         public ServerInfo GetInfo(){
             return new ServerInfo(server_id,url,max_faults.ToString()
                 ,min_delay.ToString(),max_delay.ToString());
+        }
+
+        //update view of other servers
+        public void updateView(){
+            foreach(KeyValuePair<string, ServerInfo> pair in serverList){
+                if(pair.Value.isOnline == false) continue;//skip if offline
+                IServerToServer server = (IServerToServer) Activator.GetObject(
+                    typeof(IServerToServer),
+                    pair.Value.url_to_server);
+                try{
+                    server.ping();
+                }catch(Exception ex){
+                    Log.Debug(ex, "Server {server} is offline", pair.Value.server_id);
+                    pair.Value.isOnline = false;
+                }
+            }
+            int count = 0;
+            foreach(KeyValuePair<string, ServerInfo> pair in serverList){
+                if(pair.Value.isOnline == false) count++;
+            }
+            Log.Debug("count of crashed servers: {c}", count);
+            if(count > max_faults) throw new ServerException("max faults reached");
+        }
+
+        //get cuorrum, count servers alive
+        public int getConsensus(){
+            //see servers that are alive
+            updateView();
+            int count = 1;
+            foreach(KeyValuePair<string, ServerInfo> pair in serverList){
+                if(pair.Value.isOnline) count++;
+            }
+            //consensus = count of alive server / 2 + 1
+            return Convert.ToInt32( Math.Floor( Convert.ToDouble(count) / 2) ) ; //fuck this language
+        }
+
+        //random sleep
+        public void randomSleep(){
+            if(min_delay == 0 && max_delay == 0){
+                return;
+            }else{
+                Random random = new Random();
+                int time = random.Next(min_delay, max_delay);
+                Log.Debug("random sleep: {time}", time);
+                Thread.Sleep(time);
+            }
         }
 
         //Async send meeting to server

@@ -13,13 +13,19 @@ namespace server{
             this.server = server;
         }
 
+        public bool ping(){
+            return true;
+        }
+
         //get meeting
         public bool sendMeeting(MeetingProposal meeting){
             Log.Debug("received meeting {topic} version {v}", meeting.topic, meeting.version);
+            server.randomSleep();
             //check version here?
             if (server.meetingList.ContainsKey(meeting.topic)){
                 //server has meeting, check version and if meeting is blocked
                 //FIXME > vs >=
+                //FIXME closed vs open
                 if(server.meetingList[meeting.topic].version >= meeting.version ||
                     server.blockedMeetings.ContainsKey(meeting.topic)){
                     //current meeting is newer or is blocked
@@ -33,6 +39,7 @@ namespace server{
         //write meeting
         public void writeMeeting(MeetingProposal meeting){
             Log.Debug("write meeting {topic} version {v}", meeting.topic, meeting.version);
+            server.randomSleep();
             server.meetingList.Remove(meeting.topic);
             server.meetingList.Add(meeting.topic, meeting);
             server.blockedMeetings.Remove(meeting.topic);
@@ -48,14 +55,17 @@ namespace server{
         }
 
         public void DONTwriteMeeting(MeetingProposal meeting){
+            server.randomSleep();
             server.blockedMeetings.Remove(meeting.topic);
         }
 
         public void addNewServer(ServerInfo serverInfo){
+            server.randomSleep();
             server.addNewServer(serverInfo);
         }
 
         public void addMeeting(MeetingProposal meeting){
+            server.randomSleep();
             server.addMeeting(meeting);
             Log.Debug("meeting " + meeting.topic + " added" );
         }
