@@ -299,7 +299,6 @@ namespace client{
             //will be called when delegate is over
             ListDelegate del = (ListDelegate)((AsyncResult)ar).AsyncDelegate;
             lock(meetingList){
-                //TODO update instead of replace
                 meetingList.Clear();
                 meetingList = del.EndInvoke(ar);
             }

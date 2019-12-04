@@ -65,10 +65,10 @@ namespace lib{
         bool sendMeeting(MeetingProposal meeting);
 
         //write previously sent meeting
-        void writeMeeting(MeetingProposal meeting);
+        void writeMeeting(MeetingProposal meeting, List<ServerInfo> servers);
 
         //DONT write previously sent meeting
-        void DONTwriteMeeting(MeetingProposal meeting);
+        void DONTwriteMeeting(MeetingProposal meeting, List<ServerInfo> servers);
 
         //send this server info to other servers
         void addNewServer(ServerInfo server);

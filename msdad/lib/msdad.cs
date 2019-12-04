@@ -100,6 +100,7 @@ namespace lib{
         public List<string> invitees; //can be empty
         public List<Participant> participants;
         public bool open;
+        public bool canceled;
         public Room room;
         public string date;
         public int version;
@@ -113,6 +114,7 @@ namespace lib{
             this.invitees = invitees;
             this.participants = new List<Participant>();
             this.open = true;
+            this.canceled = false;
             this.version = 1;
         }
 
@@ -124,8 +126,8 @@ namespace lib{
             this.invitees = new List<string>(meeting.invitees);
             this.participants = new List<Participant>(meeting.participants);
             this.open = meeting.open;
-            this.room = new Room(meeting.room);
-            this.date = String.Copy(meeting.date);
+            if (room != null) this.room = new Room(meeting.room);
+            if (date != null) this.date = String.Copy(meeting.date);
             this.version = meeting.version;
         }
 
@@ -164,10 +166,11 @@ namespace lib{
         }
 
         public void close(Room room, string date){
+            if(this.canceled) return;
             this.open = false;
             this.room = room;
             this.date = date;
-            room.book(date); //TODO problem
+            room.book(date);
             this.updateVersion();
         }
 
