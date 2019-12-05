@@ -28,7 +28,7 @@ namespace lib{
     public interface IClient{
 
         //Simple ping to check client status
-        string ping();
+        bool ping();
 
         //get meeting from server
         void sendMeeting(MeetingProposal meeting);
@@ -38,7 +38,19 @@ namespace lib{
     public interface IClientPuppeteer{
 
         //simple ping to check client status
-        string ping();
+        bool ping();
+
+        //create meeting
+        MeetingProposal createMeeting(string[] args);
+
+        //join meeting
+        MeetingProposal join(string[] args);
+
+        //close meeting
+        MeetingProposal close(string topic);
+
+        //get meeting
+        MeetingProposal getMeeting(string topic);
 
         //Delays the execution of the next command for x milliseconds
         void wait(int x);

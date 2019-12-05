@@ -16,8 +16,28 @@ namespace client{
         }
 
         //simple ping
-        public string ping(){
-            return "Client "+client.username+" is online";
+        public bool ping(){
+            return true;
+        }
+
+        public MeetingProposal createMeeting(string[] args){
+            return client.create(args);
+        }
+
+        public MeetingProposal join(string[] args){
+            return client.join(args);
+        }
+
+        public MeetingProposal close(string meeting_topic){
+            return client.close(meeting_topic);
+        }
+
+        public MeetingProposal getMeeting(string topic){
+            if(client.meetingList.ContainsKey(topic)){
+                return client.meetingList[topic];
+            } else {
+                throw new ClientException("client does not have meeting");
+            }
         }
 
         //wait x miliseconds

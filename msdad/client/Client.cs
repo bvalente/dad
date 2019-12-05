@@ -17,7 +17,7 @@ namespace client{
         public string script_file;
                 
         //meetings database
-        Dictionary<string,MeetingProposal> meetingList;
+        public Dictionary<string,MeetingProposal> meetingList;
 
         //backup servers
         Dictionary<string, ServerInfo> backupServers;
@@ -40,8 +40,10 @@ namespace client{
             del.BeginInvoke(updateCallback,null);
             
             //execute script in new thread
-            Thread thread = new Thread(new ThreadStart(() => this.executeScript(script_file)));
-            thread.Start();
+            if(script_file != ""){
+                Thread thread = new Thread(new ThreadStart(() => this.executeScript(script_file)));
+                thread.Start();
+            }
 
         }
 
@@ -49,8 +51,8 @@ namespace client{
 
         //IClient.ping
         //simple ping 
-        public string ping(){
-            return "client is online";
+        public bool ping(){
+            return true;
         }
 
         //IClient.sendMeeting
@@ -129,7 +131,7 @@ namespace client{
         }
         
         //Creates a new meeting
-        void create(string[] args){
+        public MeetingProposal create(string[] args){
             string meeting_topic = args[1];
             int min_attendees = Int32.Parse(args[2]);
             int number_of_slots = Int32.Parse(args[3]);
@@ -163,21 +165,22 @@ namespace client{
                 server.createMeeting(meeting);
             } catch(MeetingException ex){
                 Log.Error(ex, "cannot create meeting");
-                return;
+                throw new ClientException("cannot create meeting", ex);
             }catch(Exception ex){
                 Log.Error(ex, "connection with server failed");
                 Action action = new Action( () => create(args));
                 getNewServer(action);
-                return;
+                return null; //TODO call self method, make getNewServer only get server,
+                //and dont rerun the method
             }
 
             meetingList.Add(meeting.topic, meeting);
-
+            return meeting;
   
         }
 
         //Joins an existing meeting
-        void join(string[] args){
+        public MeetingProposal join(string[] args){
             string meeting_topic = args[1];
             int number_of_slots = Int32.Parse(args[2]);
             //parse slots
@@ -194,39 +197,42 @@ namespace client{
                 server_url);
 
             //try to join meeting
+            MeetingProposal meeting;
             try{
-                MeetingProposal meeting = server.joinClient(this.GetInfo(), meeting_topic, slotList);
+                meeting = server.joinClient(this.GetInfo(), meeting_topic, slotList);
                 this.addMeeting(meeting);
             }catch(MeetingException ex){
                 Log.Error(ex, "cannot join client");
-                return;
+                throw new ClientException("cannot join client", ex);
             }catch(Exception ex){
                 Log.Error(ex, "cannot connect to server");
                 Action action = new Action( () => join(args));
                 getNewServer(action);
-                return;
+                return null;//FIXME
             }
+            return meeting;
         }
 
         //Closes a meeting
-        void close(string meeting_topic){
+        public MeetingProposal close(string meeting_topic){
             IServer server = (IServer) Activator.GetObject(
                 typeof(IServer),
                 server_url);
             //try to close meeting
+            MeetingProposal meeting;
             try{
-                MeetingProposal meeting = server.closeMeeting(meeting_topic, this.GetInfo());
+                meeting = server.closeMeeting(meeting_topic, this.GetInfo());
                 this.addMeeting(meeting);
             } catch(MeetingException ex){
                 Log.Error(ex, "cannot close meeting");
-                return;
+                throw new ClientException("cannot close meeting", ex);
             } catch(Exception ex){
                 Log.Error(ex, "cannot connect to server");
                 Action action = new Action( () => close(meeting_topic));
                 getNewServer(action);
-                return;
+                return null; //FIXME
             }
-            
+            return meeting;
         }
 
         //Delays the execution of the next command for x milliseconds
@@ -270,7 +276,7 @@ namespace client{
             //get random server
             if(backupServers.Count == 0){
                 Log.Error("there are no server backups");
-                return;
+                throw new ClientException("there are no server backups");
             }
             Random rand = new Random();
             List<ServerInfo> servers = new List<ServerInfo>(backupServers.Values);

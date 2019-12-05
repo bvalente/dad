@@ -2,6 +2,7 @@
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
+using System.Collections;
 
 namespace pcs{
 
@@ -12,7 +13,12 @@ namespace pcs{
             string port = "10000";
 
             //create tcp channel
-            TcpChannel channel = new TcpChannel(Int32.Parse(port));
+            var provider = new BinaryServerFormatterSinkProvider();
+            provider.TypeFilterLevel = System.Runtime.Serialization.Formatters.TypeFilterLevel.Full;
+            IDictionary props = new Hashtable();
+            props["port"] = Int32.Parse(port);
+            TcpChannel channel = new TcpChannel(props, null, provider);
+            //TcpChannel channel = new TcpChannel(Int32.Parse(port));
             ChannelServices.RegisterChannel(channel, false); 
 
             //create PCS

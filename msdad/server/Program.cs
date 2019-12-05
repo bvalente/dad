@@ -2,6 +2,7 @@
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
+using System.Collections;
 using Serilog;
 using lib;
 
@@ -23,7 +24,12 @@ namespace server{
             string service = url.Split(':')[2].Split('/')[1]; //Client
 
             //create tcp channel
-            TcpChannel channel = new TcpChannel(Int32.Parse(port));
+            var provider = new BinaryServerFormatterSinkProvider();
+            provider.TypeFilterLevel = System.Runtime.Serialization.Formatters.TypeFilterLevel.Full;
+            IDictionary props = new Hashtable();
+            props["port"] = Int32.Parse(port);
+            TcpChannel channel = new TcpChannel(props, null, provider);
+            //TcpChannel channel = new TcpChannel(Int32.Parse(port));
             ChannelServices.RegisterChannel(channel, false);
 
             int max_faults_int = Int32.Parse(max_faults);
@@ -34,6 +40,7 @@ namespace server{
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.Console()
+                .WriteTo.File("../logs/"+server_id+"_.log", rollingInterval: RollingInterval.Minute, rollOnFileSizeLimit: true)
                 .CreateLogger();
             // Log.Information("");
             // Log.Debug("");

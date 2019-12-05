@@ -6,7 +6,7 @@ using Serilog;
 
 namespace puppetMaster {
 
-    class PuppetMaster{
+    public class PuppetMaster{
 
         //singleton
         private static PuppetMaster puppetMaster;
