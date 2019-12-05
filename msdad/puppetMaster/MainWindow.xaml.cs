@@ -104,7 +104,7 @@ namespace puppetMaster{
             Console.WriteLine("Loading: " + waitTimeBox.Name);
 
             
-            puppetMaster = PuppetMaster.getPuppetMaster(this);
+            puppetMaster = PuppetMaster.getPuppetMaster();
 
             //create TCP channel on port 10001
             string port = "10001";
@@ -150,7 +150,8 @@ namespace puppetMaster{
             string min_delay = createServer_min_delay.Text;
             string max_delay =  createServer_max_delay.Text;
 
-           puppetMaster.createServer(server_id, url, max_faults, min_delay, max_delay);
+           ServerInfo server = puppetMaster.createServer(server_id, url, max_faults, min_delay, max_delay);
+           this.addServer(server);
 
         }
 
@@ -162,7 +163,8 @@ namespace puppetMaster{
             string server_url = createClient_server_url.Text;
             string script_file = createClient_script_file.Text;
 
-            puppetMaster.createClient(username, url, server_url, script_file);
+            ClientInfo client = puppetMaster.createClient(username, url, server_url, script_file);
+            this.addClient(client);
         }
 
         //add room
@@ -184,7 +186,8 @@ namespace puppetMaster{
         //crash server
         public void crash(object sender, RoutedEventArgs e){
             string server_id = crashServerID.Text;
-            puppetMaster.crashServer(server_id);
+            ServerInfo server = puppetMaster.crashServer(server_id);
+            this.removeServer(server);
 
         }
 

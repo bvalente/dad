@@ -11,8 +11,6 @@ namespace puppetMaster {
         //singleton
         private static PuppetMaster puppetMaster;
 
-        //window
-        MainWindow window;
 
         //client and server dictionaries
         Dictionary<string,ClientInfo> clientList;
@@ -22,9 +20,7 @@ namespace puppetMaster {
         Dictionary<string, Location> locationList;
 
         //singleton private constructor
-        private PuppetMaster(MainWindow window){
-            //save window
-            this.window = window;
+        private PuppetMaster(){
             //create dictionaries
             clientList = new Dictionary<string, ClientInfo>();
             serverList = new Dictionary<string, ServerInfo>();
@@ -42,9 +38,9 @@ namespace puppetMaster {
         }
 
         //singleton getter
-        public static PuppetMaster getPuppetMaster(MainWindow window){
+        public static PuppetMaster getPuppetMaster(){
             if(puppetMaster == null){
-                puppetMaster = new PuppetMaster(window);
+                puppetMaster = new PuppetMaster();
             }
             return puppetMaster;
         }
@@ -96,7 +92,7 @@ namespace puppetMaster {
             Log.Debug(command);
         }
 
-        public void createServer(string server_id, string server_url, string max_faults,
+        public ServerInfo createServer(string server_id, string server_url, string max_faults,
                                 string min_delay, string max_delay){
             
             //tcp://localhost:3000/server1 needs to be parsed
@@ -113,7 +109,7 @@ namespace puppetMaster {
             } catch(Exception ex){
                 //TODO catch PCS types of execeptions
                 Log.Error(ex,"pcs connection failed");
-                return;
+                throw new PCSException("pcs connection failed", ex);
             }
             
             //send all available rooms
@@ -129,10 +125,10 @@ namespace puppetMaster {
             
             //save server
             serverList.Add(server_id, serverInfo);
-            window.addServer(serverInfo);
+            return serverInfo;
         }
 
-        public void createClient(string username, string client_url, string server_url,
+        public ClientInfo createClient(string username, string client_url, string server_url,
                                 string script_file ){
 
             //connect to correct pcs
@@ -148,12 +144,12 @@ namespace puppetMaster {
             } catch(Exception ex){
                 //TODO catch PCS types of execeptions
                 Log.Error(ex, "pcs connection failed");
-                return;
+                throw new PCSException("pcs connection failed", ex);
             }
 
             //save client
             clientList.Add(username, clientInfo);
-            window.addClient(clientInfo);
+            return clientInfo;
         }
 
         public void addRoom(string location_name, string capacity, string room_name){
@@ -206,7 +202,7 @@ namespace puppetMaster {
             }
         }
 
-        public void crashServer(string server_id){
+        public ServerInfo crashServer(string server_id){
             //get server
             ServerInfo serverInfo = serverList[server_id];
             IServerPuppeteer server = (IServerPuppeteer) Activator.GetObject(
@@ -218,8 +214,8 @@ namespace puppetMaster {
             action.BeginInvoke(null, null);
 
             //remove evidence of server
-            window.removeServer(serverInfo);
             serverList.Remove(server_id);
+            return serverInfo;
         }
 
         public void freezeServer(string server_id){
