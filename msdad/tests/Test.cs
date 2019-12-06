@@ -54,7 +54,7 @@ namespace tests{
         }
         
         //simple ping success
-        //[Test]
+        [Test]
         public void success(){
             TestContext.Progress.WriteLine("start test: success");
 
@@ -87,7 +87,7 @@ namespace tests{
         }
 
         //meeting com minimo capacidade 5
-        //[Test]
+        [Test]
         public void NotEnoughParticipants(){
             TestContext.Progress.WriteLine("start test: not enough participants");
             
@@ -112,7 +112,7 @@ namespace tests{
         }
 
         //close by someone not coordinator
-        //[Test]
+        [Test]
         public void NotCoordinator(){
             TestContext.Progress.WriteLine("start test: not coordinator");
             
@@ -135,7 +135,7 @@ namespace tests{
         }
         
         //try close meeting two times in row
-        //[Test]
+        [Test]
         public void AlreadyClose(){
             TestContext.Progress.WriteLine("start test: already closed");
             
@@ -166,7 +166,7 @@ namespace tests{
         }
 
         //sala com capacidade 3
-        //[Test]
+        [Test]
         public void MaxParticipantsExceededInRoom(){
             TestContext.Progress.WriteLine("start test: max participants exceeded in room");
             
@@ -191,7 +191,7 @@ namespace tests{
         }
 
         //tries to close meeting that does not exist
-        //[Test]
+        [Test]
         public void MeetingDoesNotExist(){
             TestContext.Progress.WriteLine("start test: meeting does not exist");
 
