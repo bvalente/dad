@@ -20,7 +20,7 @@ namespace server{
         public bool freeze = false;
 
         //pending actions
-        List<Action> actionList;
+        public List<Action> actionList;
 
         //client database
         public Dictionary<string, ClientInfo> clientList;
@@ -99,6 +99,7 @@ namespace server{
             }
 
             //Async send meeting to other servers
+            updateView();
             writeBroadcast(meeting, new List<ServerInfo>(serverList.Values));
 
             //Async send meeting info to clients
@@ -395,20 +396,6 @@ namespace server{
             serverList.Add(serverInfo.server_id,serverInfo);
         }
 
-        // //ServerToServer addMeeting
-        // public void addMeeting(MeetingProposal meeting){
-        //     //if already exists, replace
-        //     lock(meetingList){
-        //         if(meetingList.ContainsKey(meeting.topic)){
-        //             meetingList.Remove(meeting.topic);
-        //         }
-        //         meetingList.Add(meeting.topic,meeting);
-        //     }
-
-        //     //Async send meeting info to clients
-        //     UpdateClientDelegate del = new UpdateClientDelegate(updateClientAsync);
-        //     del.BeginInvoke(meeting, new List<ClientInfo>(clientList.Values), null, null);
-        // }
 
         //End of other interfaces methods
 
@@ -554,22 +541,6 @@ namespace server{
                 serverInfo.url_to_server);
             server.DONTwriteMeeting(meeting, servers);
             
-        }
-
-
-        //Async update meeting to other servers
-        delegate void UpdateServersDelegate(MeetingProposal meeting);
-
-        void updateServers(MeetingProposal meeting){
-            //FIXME sleep, wait for services
-            Thread.Sleep(200);
-            //update other servers
-            foreach(KeyValuePair<string, ServerInfo> pair in serverList){
-                IServerToServer server = (IServerToServer) Activator.GetObject(
-                    typeof(IServerToServer),
-                    pair.Value.url_to_server);
-                server.addMeeting(meeting);
-            }
         }
 
         public void updateClients(MeetingProposal meeting){

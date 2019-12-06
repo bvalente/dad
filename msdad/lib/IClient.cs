@@ -52,6 +52,9 @@ namespace lib{
         //get meeting
         MeetingProposal getMeeting(string topic);
 
+        //get client's server url
+        string getServer();
+
         //Delays the execution of the next command for x milliseconds
         void wait(int x);
 
@@ -60,8 +63,11 @@ namespace lib{
 
         //reset program
         void kill();
+
+        void undo();
     }
 
+    [Serializable]
     public class ClientException : Exception{
         public ClientException(){
         }

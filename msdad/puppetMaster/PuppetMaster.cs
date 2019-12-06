@@ -271,5 +271,24 @@ namespace puppetMaster {
             //reset locations
             locationList.Clear();
         }
+
+        public void undoAll(){
+            foreach(KeyValuePair<string, ServerInfo> pair in serverList){
+                IServerPuppeteer server = (IServerPuppeteer) Activator.GetObject(
+                    typeof(IServerPuppeteer),
+                    pair.Value.url_puppeteer);
+                server.undo();
+            }
+            
+            //reset clients
+            foreach(KeyValuePair<string, ClientInfo> pair in clientList){
+                IClientPuppeteer client = (IClientPuppeteer) Activator.GetObject(
+                    typeof(IClientPuppeteer),
+                    pair.Value.client_url_puppeteer);
+                client.undo();
+            }
+
+            locationList.Clear();
+        }
     }
 }

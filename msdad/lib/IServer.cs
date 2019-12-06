@@ -73,8 +73,6 @@ namespace lib{
         //send this server info to other servers
         void addNewServer(ServerInfo server);
 
-        //send meeting to other servers
-        void addMeeting(MeetingProposal meeting);
     }
 
     //interface for Puppet Master
@@ -99,8 +97,14 @@ namespace lib{
         //unfreeze server
         void unfreeze();
 
+        //get meeting by topic
+        MeetingProposal getMeeting(string topic);
+
         //crash server
         void kill();
+
+        //clear all rooms and meetings
+        void undo();
     }
 
     [Serializable]

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using lib;
 using Serilog;
+using System.Threading;
 
 namespace server{
 		//interface for server to other servers
@@ -19,6 +20,9 @@ namespace server{
 
         //get meeting
         public bool sendMeeting(MeetingProposal meeting){
+            if(server.freeze){
+                return false;
+            }
             Log.Debug("received meeting {topic} version {v}", meeting.topic, meeting.version);
             server.randomSleep();
             //check version here?
@@ -33,11 +37,18 @@ namespace server{
                 }
             }
             server.blockedMeetings.Add(meeting.topic, meeting);
+            Thread t = new Thread( () => meetingTimeOut(meeting) );
+            t.Start();
             return true;
         }
 
         //write meeting
         public void writeMeeting(MeetingProposal meeting, List<ServerInfo> servers){
+            if(server.freeze){
+                Action action = new Action( () => writeMeeting(meeting, servers));
+                server.actionList.Add(action);
+                return;
+            }
             Log.Debug("write meeting {topic} version {v}", meeting.topic, meeting.version);
             server.randomSleep();
             if(server.meetingList.ContainsKey(meeting.topic) && 
@@ -69,10 +80,14 @@ namespace server{
             server.addNewServer(serverInfo);
         }
 
-        public void addMeeting(MeetingProposal meeting){
-            // server.randomSleep();
-            // server.addMeeting(meeting);
-            // Log.Debug("meeting " + meeting.topic + " added" );
+        private void meetingTimeOut(MeetingProposal meeting){
+            Thread.Sleep(5000);
+            //if meeting ainda na blocked list and right version
+            if(server.blockedMeetings.ContainsKey(meeting.topic) 
+                    && meeting.version == server.blockedMeetings[meeting.topic].version){
+                server.blockedMeetings.Remove(meeting.topic);
+              }
         }
+
     }
 }

@@ -16,6 +16,9 @@ namespace lib{
 
         public Room addRoom(string room_name, int capacity){
             Room room = new Room(this, capacity, room_name);
+            if(roomList.ContainsKey(room.room_name)){
+                roomList.Remove(room.room_name);
+            }
             roomList.Add(room.room_name, room);
             return room;
         }

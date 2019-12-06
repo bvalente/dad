@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using lib;
+using Serilog;
 
 namespace client{
 
@@ -40,6 +41,10 @@ namespace client{
             }
         }
 
+        public string getServer(){
+            return client.server_url;
+        }
+
         //wait x miliseconds
         public void wait(int x){
             Thread.Sleep(x);
@@ -56,5 +61,11 @@ namespace client{
             Environment.Exit(0);
         }
 
+        public void undo(){
+            Log.Fatal("undo all");
+            client.meetingList.Clear();
+            //TODO
+            
+        }
     }
 }

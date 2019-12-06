@@ -1,3 +1,4 @@
+using NUnit.Framework;
 using System;
 using lib;
 using System.Collections;
@@ -8,14 +9,22 @@ namespace tests{
 
     public static class Base{
 
+		static TcpChannel channel;
+
 		public static void SetUpChannel(){
+			TestContext.Progress.WriteLine("open channel");
 			var provider = new BinaryServerFormatterSinkProvider();
             provider.TypeFilterLevel = System.Runtime.Serialization.Formatters.TypeFilterLevel.Full;
             IDictionary props = new Hashtable();
             props["port"] = 9999;
-            TcpChannel channel = new TcpChannel(props, null, provider);
+            channel = new TcpChannel(props, null, provider);
             ChannelServices.RegisterChannel(channel, false);
 			
+		}
+
+		public static void CloseChannel(){
+			TestContext.Progress.WriteLine("close channel");
+			ChannelServices.UnregisterChannel(channel);
 		}
 
 		public static T GetObject<T>(string url){

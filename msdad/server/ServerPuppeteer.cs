@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Collections.Generic;
 using lib;
 using Serilog;
@@ -34,6 +35,12 @@ namespace server{
 
         public void kill(){
             Log.Fatal("Bye bye");
+            Thread t = new Thread( () => killAsync());
+            t.Start();
+        }
+
+        public void killAsync(){
+            Thread.Sleep(500);
             Environment.Exit(0);
         }
 
@@ -46,5 +53,20 @@ namespace server{
             server.executeActionList();
         }
 
+        public MeetingProposal getMeeting(string topic){
+            if(server.meetingList.ContainsKey(topic)){
+                return server.meetingList[topic];
+            }
+            return null;
+        }
+
+        public void undo(){
+            Log.Fatal("undo all");
+            server.meetingList.Clear();
+            server.locationList.Clear();
+            //TODO
+            
+        }
     }
+
 }
