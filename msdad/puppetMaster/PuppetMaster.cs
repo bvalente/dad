@@ -54,13 +54,18 @@ namespace puppetMaster {
                 switch(cmds[0]){
 
                     case "Server":
-                        createServer(cmds[1],cmds[2],cmds[3],cmds[4],cmds[5]);
+                        createServerAsync server = new createServerAsync(createServer);
+                        server.BeginInvoke(cmds[1],cmds[2],cmds[3],cmds[4],cmds[5], null, null);
+                        //createServer(cmds[1],cmds[2],cmds[3],cmds[4],cmds[5]);
                         break;
                     case "Client":
+                        createClientAsync client = new createClientAsync(createClient);
                         if (cmds.Length==5){
-                            createClient(cmds[1],cmds[2],cmds[3],cmds[4]);
+                            client.BeginInvoke(cmds[1],cmds[2],cmds[3],cmds[4], null, null);
+                            //createClient(cmds[1],cmds[2],cmds[3],cmds[4]);
                         }else{//no script file
-                            createClient(cmds[1],cmds[2],cmds[3],"");
+                            client.BeginInvoke(cmds[1],cmds[2],cmds[3],"", null, null);
+                            //createClient(cmds[1],cmds[2],cmds[3],"");
                         }
                         break;
                     case "AddRoom":
@@ -92,6 +97,9 @@ namespace puppetMaster {
             Log.Debug(command);
         }
 
+        delegate ServerInfo createServerAsync(string server_id, string server_url, string max_faults,
+                                string min_delay, string max_delay);
+
         public ServerInfo createServer(string server_id, string server_url, string max_faults,
                                 string min_delay, string max_delay){
             
@@ -111,22 +119,25 @@ namespace puppetMaster {
                 Log.Error(ex,"pcs connection failed");
                 throw new PCSException("pcs connection failed", ex);
             }
+            //save server
+            serverList.Add(server_id, serverInfo);
             
             //send all available rooms
             IServerPuppeteer server = (IServerPuppeteer) Activator.GetObject(
                 typeof(IServerPuppeteer),
                 serverInfo.url_puppeteer);
             try{
-                Thread.Sleep(500); //TODO: make async
+                //Thread.Sleep(50); //TODO: make async
                 server.populate(locationList,serverList);
             } catch(Exception ex){
                 Log.Error(ex, "connection to server failed");
             }
             
-            //save server
-            serverList.Add(server_id, serverInfo);
             return serverInfo;
         }
+
+        delegate ClientInfo createClientAsync(string username, string client_url, string server_url,
+                                string script_file);
 
         public ClientInfo createClient(string username, string client_url, string server_url,
                                 string script_file ){

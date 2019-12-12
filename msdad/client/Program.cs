@@ -48,9 +48,11 @@ namespace client{
             // Log.Error("");
 
             //create client and puppeteer
+            Log.Debug("creating objects");
             Client client = new Client(username, client_url, server_url, script_file);
             ClientPuppeteer puppeteer = new ClientPuppeteer(client);
             
+            Log.Debug("marshalling objects");
             //marshall objects
             RemotingServices.Marshal(
                 puppeteer,

@@ -165,7 +165,8 @@ namespace client{
                 server.createMeeting(meeting);
             } catch(MeetingException ex){
                 Log.Error(ex, "cannot create meeting");
-                throw new ClientException("cannot create meeting", ex);
+                //throw new ClientException("cannot create meeting", ex);
+                return null;
             }catch(Exception ex){
                 Log.Error(ex, "connection with server failed");
                 Action action = new Action( () => create(args));
@@ -203,7 +204,8 @@ namespace client{
                 this.addMeeting(meeting);
             }catch(MeetingException ex){
                 Log.Error(ex, "cannot join client");
-                throw new ClientException("cannot join client", ex);
+                //throw new ClientException("cannot join client", ex);
+                return null;
             }catch(Exception ex){
                 Log.Error(ex, "cannot connect to server");
                 Action action = new Action( () => join(args));
@@ -225,7 +227,8 @@ namespace client{
                 this.addMeeting(meeting);
             } catch(MeetingException ex){
                 Log.Error(ex, "cannot close meeting");
-                throw new ClientException("cannot close meeting", ex);
+                //throw new ClientException("cannot close meeting", ex);
+                return null;
             } catch(Exception ex){
                 Log.Error(ex, "cannot connect to server");
                 Action action = new Action( () => close(meeting_topic));

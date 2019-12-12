@@ -3,6 +3,7 @@ using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
 using System.Collections;
+using Serilog;
 
 namespace pcs{
 
@@ -20,6 +21,12 @@ namespace pcs{
             TcpChannel channel = new TcpChannel(props, null, provider);
             //TcpChannel channel = new TcpChannel(Int32.Parse(port));
             ChannelServices.RegisterChannel(channel, false); 
+
+            //Initialize debugger
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console()
+                .CreateLogger();
 
             //create PCS
             PCS pcs = new PCS();

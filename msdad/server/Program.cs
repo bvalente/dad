@@ -46,11 +46,13 @@ namespace server{
             // Log.Debug("");
             // Log.Error("");
             
+            Log.Debug("creating objects");
             //create server, puppeteer and serverToServer
             Server server = new Server(server_id, url, max_faults_int, min_delay_int, max_delay_int);
             ServerPuppeteer puppeteer = new ServerPuppeteer(server);
             ServerToServer serverToServer = new ServerToServer(server);
 
+            Log.Debug("marshalling objects");
             //marshall objects
             RemotingServices.Marshal(
                 puppeteer,
