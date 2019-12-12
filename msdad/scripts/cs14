@@ -1,5 +1,4 @@
 wait 1000
-create m1 3 2 3 Lisboa,2020-01-01 Porto,2020-02-03 c1 c8 c14
 wait 1000
 list
 join m1 1 Lisboa,2020-01-01
@@ -12,11 +11,9 @@ join m4 1 Funchal,2020-03-03
 wait 1500
 join m5 1 Coimbra,2020-05-05
 wait 1500
-join m6 1 Lisboa,2020-06-06
-wait 1500
 join m7 1 Lisboa,2020-07-07
 wait 1500
-join m8 1 Lisboa,2020-08-08
+join m8 1 Porto,2020-05-05
 wait 1500
 join m9 1 Porto,2020-09-09
 wait 1500
@@ -26,5 +23,5 @@ join m11 1 Lisboa,2020-11-11
 wait 1500
 join m12 1 Lisboa,2020-12-12
 wait 1500
+wait 1000
 list
-close m1
